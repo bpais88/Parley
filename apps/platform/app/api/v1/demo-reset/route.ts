@@ -47,7 +47,7 @@ async function resetDemo(request: Request) {
     await db.delete(holds).where(eq(holds.propertyId, property.id));
     await db.execute(sql`
       update ${inventory}
-      set ${inventory.roomsSold} = case
+      set rooms_sold = case
         when ${inventory.stayDate} >= '2026-09-24'::date
           and ${inventory.stayDate} < '2026-09-27'::date then 5
         when ${inventory.stayDate} >= '2026-10-10'::date

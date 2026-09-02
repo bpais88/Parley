@@ -48,6 +48,15 @@
 - Secrets: GREEN — owner demo passcode configured for all environments and a generated sensitive cron secret configured for production.
 - Remaining: redeploy with the new environment, verify health, and execute the real API sequence.
 
+### Gate 2 live verification
+
+- Production health: GREEN — hosted Neon connected, 60 inventory nights checked, minimum availability one room including the blackout window, 2026-09-02 23:22 BST.
+- Real production flow: GREEN — availability → five-room hold → first offer €1,650 room / €1,680 all-in → €1,400 prepaid counter → second offer €1,530 room / €1,560 all-in NRF with breakfast and late checkout → status → checkout token → booking `confirmed` → visitor-bound booking read → owner ledger, 2026-09-02 23:23 BST.
+- Ledger: GREEN — production acceptance wrote `uplift_vs_ota_cents: 7410`; the passcode-protected owner ledger returned the same €74.10 total.
+- Demo reset first live run: RED — Postgres rejected a qualified target column in the raw `UPDATE ... SET` clause. The target was changed to unqualified `rooms_sold` as PostgreSQL requires.
+- Demo reset retry against hosted Neon: GREEN — state cleared and inventory restored; health remained green, 2026-09-02 23:26 BST.
+- Status: GREEN for the reduced Gate 2. Concurrency stress and scheduled-cron observation remain soak tasks, not assumed.
+
 ## Gate 3 — Reduced WebMCP kit and hotel demo
 
 - Status: PARTIAL — contract, browser registration, panel rendering, and mocked E2E are green; a live database-backed negotiation is pending Gate 2.
@@ -59,3 +68,10 @@
 - E2E: GREEN — two Chromium tests passed in 2.6 s: the localhost-only shim drove all negotiation stages and asserted €1,650 → €1,530 room totals / €1,560 all-in; the separate clicks-only flow reached confirmation and verified that the checkout has no card data and processes no payment, 2026-09-02 23:13 BST.
 - Full local regression: GREEN — `pnpm typecheck`, `pnpm lint`, `pnpm test` (28 tests), and `pnpm build`, 2026-09-02 23:11 BST.
 - Pending before Gate 3 can be fully green: live seeded API run, deployed `/demo` tool sequence in the target ChatGPT browser, checkout confirmation against Neon, and submission screenshots.
+
+### Gate 3 live verification
+
+- Deployed `/demo`: GREEN — canonical Vercel page loaded without the database error and exposed all eight registered tools in the Codex in-app browser, 2026-09-02 23:23 BST.
+- Direct site-tool invocation: GREEN — `get_stay_context` returned the visible five-room 24–27 Sep stay, seeded property, next actions, and explicit human-only acceptance/payment/cancellation boundary.
+- Production HTTP checkout: GREEN — the separate live API run confirmed the negotiated booking and exact ledger values; visible browser checkout still needs a target ChatGPT manual screenshot run.
+- Status: PARTIAL — production data and tool registration are live; judge-prompt behavior and screenshots remain manual Gate 4 evidence.
