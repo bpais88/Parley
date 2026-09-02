@@ -93,6 +93,8 @@
 - Demo readiness: GREEN — the explicit owner reset succeeded afterward, returning the shared demo to seeded availability.
 - Manual evidence still required: run the natural-language judge prompt in a fresh ChatGPT Sol/Terra personal-account tab and retain the screenshots/model/timing. Direct site-tool runtime invocation is observed; conversational tool selection is not yet claimed.
 - Active-run cron safety: GREEN — with one live hosted-database hold, the scheduled GET reset returned `skipped: true`; the explicit owner POST reset then cleared state successfully, 2026-09-02 23:32 BST.
+- Rebook-direct production path: GREEN — for 17–19 Oct, one refundable Booking.com room at €120/night produced a `beat_ota` flexible offer at €111/night plus tax with breakfast and the mandatory “book here first, then cancel there” wording. The 8% discount reflects the seeded weekend occupancy band; the isolated 42% engine fixture remains €106.
+- Concurrent oversell check: GREEN — two different visitors simultaneously requested seven of seven available rooms; the advisory-lock path returned one 201 hold and one 409 `not_available`, never fourteen held rooms. Demo reset then restored seven available rooms and the 42% worked-example occupancy.
 
 ## Repository preflight
 
