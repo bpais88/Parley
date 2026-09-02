@@ -31,54 +31,61 @@ function roomsSoldFor(dateString: string): number {
   return weekday === 5 || weekday === 6 ? 8 : 5;
 }
 
-await db
-  .insert(properties)
-  .values({
-    slug: DEMO_PROPERTY_SLUG,
-    publicKey: DEMO_PUBLIC_KEY,
-    name: DEMO_POLICY.property_name,
-    city: "Ferreira do Zêzere, Portugal",
-    policy: DEMO_POLICY,
-    totalRooms: DEMO_TOTAL_ROOMS,
-  })
-  .onConflictDoUpdate({
-    target: properties.slug,
-    set: {
+async function seed() {
+  await db
+    .insert(properties)
+    .values({
+      slug: DEMO_PROPERTY_SLUG,
       publicKey: DEMO_PUBLIC_KEY,
       name: DEMO_POLICY.property_name,
       city: "Ferreira do Zêzere, Portugal",
       policy: DEMO_POLICY,
       totalRooms: DEMO_TOTAL_ROOMS,
-    },
+    })
+    .onConflictDoUpdate({
+      target: properties.slug,
+      set: {
+        publicKey: DEMO_PUBLIC_KEY,
+        name: DEMO_POLICY.property_name,
+        city: "Ferreira do Zêzere, Portugal",
+        policy: DEMO_POLICY,
+        totalRooms: DEMO_TOTAL_ROOMS,
+      },
+    });
+
+  const [property] = await db
+    .select({ id: properties.id })
+    .from(properties)
+    .where(eq(properties.slug, DEMO_PROPERTY_SLUG))
+    .limit(1);
+
+  if (!property) {
+    throw new Error("Demo property upsert did not return a readable row");
+  }
+
+  const start = new Date("2026-09-01T00:00:00Z");
+  const rows = Array.from({ length: 120 }, (_, offset) => {
+    const current = new Date(start.getTime() + offset * 86_400_000);
+    const stayDate = isoDate(current);
+    return {
+      propertyId: property.id,
+      stayDate,
+      roomsSold: roomsSoldFor(stayDate),
+    };
   });
 
-const [property] = await db
-  .select({ id: properties.id })
-  .from(properties)
-  .where(eq(properties.slug, DEMO_PROPERTY_SLUG))
-  .limit(1);
+  await db
+    .insert(inventory)
+    .values(rows)
+    .onConflictDoUpdate({
+      target: [inventory.propertyId, inventory.stayDate],
+      set: { roomsSold: sql`excluded.rooms_sold` },
+    });
 
-if (!property) {
-  throw new Error("Demo property upsert did not return a readable row");
+  console.info(`Seeded ${rows.length} nights for ${DEMO_POLICY.property_name}.`);
 }
 
-const start = new Date("2026-09-01T00:00:00Z");
-const rows = Array.from({ length: 120 }, (_, offset) => {
-  const current = new Date(start.getTime() + offset * 86_400_000);
-  const stayDate = isoDate(current);
-  return {
-    propertyId: property.id,
-    stayDate,
-    roomsSold: roomsSoldFor(stayDate),
-  };
+void seed().catch((error: unknown) => {
+  console.error(error instanceof Error ? error.message : "Seed failed");
+  process.exitCode = 1;
 });
-
-await db
-  .insert(inventory)
-  .values(rows)
-  .onConflictDoUpdate({
-    target: [inventory.propertyId, inventory.stayDate],
-    set: { roomsSold: sql`excluded.rooms_sold` },
-  });
-
-console.info(`Seeded ${rows.length} nights for ${DEMO_POLICY.property_name}.`);

@@ -71,3 +71,9 @@ The participant's canonical Vercel project is `parleywebmcp`. Its Root Directory
 - The `?debug=1` shim activates only on `localhost` or `127.0.0.1`. There is no public query-string bypass in the deployed build.
 - The visible checkout contains only guest name and email. It obtains a short-lived checkout token after the human presses the offer button; it has no card field and clearly states that no charge is made.
 - The first demo remains on the Vercel origin. The Level 0 file advertises the open discovery convention, but no email channel or remote validator is claimed in the reduced scope.
+
+## 2026-09-02 — Hosted database
+
+- Provisioned a Neon Free database through the Vercel Marketplace in `lhr1` and connected it to production, preview, and development for the canonical `parleywebmcp` project.
+- Neon authentication was disabled because Parley owns its visitor-cookie and owner-passcode boundaries; no separate end-user authentication product is needed for this demo.
+- The owner demo passcode is `parley-demo-2026`. The cron secret is generated, sensitive, and never committed.

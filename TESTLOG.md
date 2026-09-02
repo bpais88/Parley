@@ -39,6 +39,15 @@
 - Full verification: GREEN — `pnpm typecheck`, `pnpm lint`, `pnpm test` (26 passed), and `pnpm build`, 2026-09-02 23:04 BST.
 - Pending before Gate 2 can be green: connect Neon, set `DATABASE_URL`, migrate, seed, run database integration cases, configure `OWNER_PASSCODE` and `CRON_SECRET`, redeploy, and verify `/api/v1/health`.
 
+### Gate 2 infrastructure follow-up
+
+- Neon provisioning: GREEN — Free plan, London region, connected to production/preview/development through Vercel Marketplace, 2026-09-02 23:18 BST.
+- Migrations: GREEN — both committed Drizzle migrations and the atomic hold function applied to hosted Neon, 2026-09-02 23:19 BST.
+- Seed first run: RED — the development runner treated the script as CommonJS and rejected top-level await. The seed entry point was wrapped in an explicit async function.
+- Seed retry: GREEN — 120 Casa do Zêzere inventory nights inserted into hosted Neon, 2026-09-02 23:20 BST.
+- Secrets: GREEN — owner demo passcode configured for all environments and a generated sensitive cron secret configured for production.
+- Remaining: redeploy with the new environment, verify health, and execute the real API sequence.
+
 ## Gate 3 — Reduced WebMCP kit and hotel demo
 
 - Status: PARTIAL — contract, browser registration, panel rendering, and mocked E2E are green; a live database-backed negotiation is pending Gate 2.
