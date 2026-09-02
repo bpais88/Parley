@@ -4,5 +4,9 @@
   "devCommand": "pnpm --filter @parley/platform dev",
   "framework": "nextjs",
   "installCommand": "pnpm install --frozen-lockfile",
-  "outputDirectory": "apps/platform/.next"
+  "outputDirectory": "apps/platform/.next",
+  "crons": [
+    { "path": "/api/cron/expire", "schedule": "*/5 * * * *" },
+    { "path": "/api/v1/demo-reset", "schedule": "0 * * * *" }
+  ]
 }

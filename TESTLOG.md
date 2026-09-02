@@ -38,3 +38,15 @@
 - Safety unit tests: GREEN — recursive personal/card-field redaction, token hashing, rate limiting, and property-date range behavior.
 - Full verification: GREEN — `pnpm typecheck`, `pnpm lint`, `pnpm test` (26 passed), and `pnpm build`, 2026-09-02 23:04 BST.
 - Pending before Gate 2 can be green: connect Neon, set `DATABASE_URL`, migrate, seed, run database integration cases, configure `OWNER_PASSCODE` and `CRON_SECRET`, redeploy, and verify `/api/v1/health`.
+
+## Gate 3 — Reduced WebMCP kit and hotel demo
+
+- Status: PARTIAL — contract, browser registration, panel rendering, and mocked E2E are green; a live database-backed negotiation is pending Gate 2.
+- Kit build: GREEN — one minified IIFE, 22,689 bytes raw / 7,828 bytes gzipped, 2026-09-02 23:14 BST.
+- Manifest contract: GREEN — eight unique approved tools; descriptions ≥40 characters; strict top-level object schemas; correct read annotations; write side effects described; no accept/pay/card/cancel tool.
+- In-app browser registration: GREEN — local `/demo` exposed all eight page tools from the top-level kit script, 2026-09-02 23:12 BST.
+- Visual smoke: GREEN — hotel landing page and 420 px Shadow DOM panel rendered together; stay picker, two-identity timeline, activity strip, and unavailable-database error state were legible, 2026-09-02 23:12 BST.
+- Playwright setup: initial run was blocked because the pinned Chromium binary was absent; Playwright Chromium 1234 was installed and the same run was repeated.
+- E2E: GREEN — two Chromium tests passed in 2.6 s: the localhost-only shim drove all negotiation stages and asserted €1,650 → €1,530 room totals / €1,560 all-in; the separate clicks-only flow reached confirmation and verified that the checkout has no card data and processes no payment, 2026-09-02 23:13 BST.
+- Full local regression: GREEN — `pnpm typecheck`, `pnpm lint`, `pnpm test` (28 tests), and `pnpm build`, 2026-09-02 23:11 BST.
+- Pending before Gate 3 can be fully green: live seeded API run, deployed `/demo` tool sequence in the target ChatGPT browser, checkout confirmation against Neon, and submission screenshots.

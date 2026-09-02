@@ -8,6 +8,7 @@ export default defineConfig({
     },
   },
   test: {
+    exclude: ["e2e/**", "**/node_modules/**", "**/.next/**"],
     include: ["**/*.{test,spec}.ts"],
     passWithNoTests: true,
   },

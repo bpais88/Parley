@@ -1,0 +1,162 @@
+export type JsonSchema = {
+  type: "object";
+  properties: Record<string, unknown>;
+  required?: string[];
+  additionalProperties: false;
+};
+
+export type ToolDefinition = {
+  name: string;
+  description: string;
+  inputSchema: JsonSchema;
+  annotations: {
+    readOnlyHint: boolean;
+    destructiveHint?: false;
+  };
+};
+
+const date = { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$" };
+const stayProperties = {
+  check_in: date,
+  check_out: date,
+  rooms: { type: "integer", minimum: 1, maximum: 12 },
+  guests_per_room: { type: "integer", minimum: 1, maximum: 4 },
+};
+
+const read = { readOnlyHint: true } as const;
+const write = { readOnlyHint: false, destructiveHint: false } as const;
+
+export const TOOL_DEFINITIONS: ToolDefinition[] = [
+  {
+    name: "get_stay_context",
+    description:
+      "Reads the stay, room, active hold, and current negotiated offer visible in the Parley panel. Use it before acting or when the human refers to this page; it changes nothing and explains that acceptance is human-only.",
+    inputSchema: { type: "object", properties: {}, additionalProperties: false },
+    annotations: read,
+  },
+  {
+    name: "set_dates",
+    description:
+      "Updates the dates, room count, and guests shown in the Parley panel. Use it when the guest specifies a stay; it visibly changes the shared page state and returns the updated context.",
+    inputSchema: {
+      type: "object",
+      properties: stayProperties,
+      required: ["check_in", "check_out", "rooms", "guests_per_room"],
+      additionalProperties: false,
+    },
+    annotations: write,
+  },
+  {
+    name: "search_availability",
+    description:
+      "Checks live Standard-room availability and direct prices for a specified stay. Use it before holding rooms; it performs a read only and returns flexible, non-refundable, tax, and breakfast figures.",
+    inputSchema: {
+      type: "object",
+      properties: stayProperties,
+      required: ["check_in", "check_out", "rooms", "guests_per_room"],
+      additionalProperties: false,
+    },
+    annotations: read,
+  },
+  {
+    name: "hold_rooms",
+    description:
+      "Places a temporary 15-minute hold on Standard rooms for the requested stay. Use it only after availability is checked; it reserves inventory, starts the visible countdown, and does not book or charge anything.",
+    inputSchema: {
+      type: "object",
+      properties: stayProperties,
+      required: ["check_in", "check_out", "rooms", "guests_per_room"],
+      additionalProperties: false,
+    },
+    annotations: write,
+  },
+  {
+    name: "request_offer",
+    description:
+      "Asks the hotel's deterministic policy engine for a direct offer against an active hold. Use it after hold_rooms; it opens a negotiation and can include requested perks, but cannot accept, book, pay, or cancel another booking.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        hold_id: { type: "string", format: "uuid" },
+        asks: {
+          type: "array",
+          maxItems: 6,
+          items: {
+            type: "string",
+            enum: ["breakfast", "late_checkout", "early_checkin", "upgrade", "parking", "other"],
+          },
+        },
+        payment_preference: { type: "string", enum: ["flexible", "prepaid_ok"] },
+        notes: { type: "string", maxLength: 200 },
+        existing_booking: {
+          type: "object",
+          properties: {
+            channel: { type: "string", minLength: 1, maxLength: 80 },
+            rate_per_night_cents: { type: "integer", minimum: 1 },
+            total_cents: { type: "integer", minimum: 1 },
+            check_in: date,
+            check_out: date,
+            refundable: { type: "boolean" },
+            cancellation_deadline: { type: "string", format: "date-time" },
+          },
+          required: [
+            "channel",
+            "rate_per_night_cents",
+            "total_cents",
+            "check_in",
+            "check_out",
+            "refundable",
+            "cancellation_deadline",
+          ],
+          additionalProperties: false,
+        },
+      },
+      required: ["hold_id", "asks", "payment_preference"],
+      additionalProperties: false,
+    },
+    annotations: write,
+  },
+  {
+    name: "counter_offer",
+    description:
+      "Submits one price counter to the open hotel negotiation. Use it when the guest wants a better total or per-night price; it advances the negotiation round and may require prepayment or adjust inclusions, but never accepts the offer.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        session_id: { type: "string", format: "uuid" },
+        target_total_cents: { type: "integer", minimum: 1 },
+        target_per_night_cents: { type: "integer", minimum: 1 },
+        keep_inclusions: { type: "boolean" },
+        payment_preference: { type: "string", enum: ["flexible", "prepaid_ok"] },
+        message: { type: "string", maxLength: 200 },
+      },
+      required: ["session_id", "keep_inclusions", "payment_preference"],
+      additionalProperties: false,
+    },
+    annotations: write,
+  },
+  {
+    name: "get_offer_status",
+    description:
+      "Reads the latest offer, expiry, round, and hold state for one negotiation. Use it before relaying or countering an offer; it changes nothing and states that the guest must use the visible Accept & pay button.",
+    inputSchema: {
+      type: "object",
+      properties: { session_id: { type: "string", format: "uuid" } },
+      required: ["session_id"],
+      additionalProperties: false,
+    },
+    annotations: read,
+  },
+  {
+    name: "get_booking",
+    description:
+      "Reads a confirmed booking made by this visitor from its Parley reference. Use it after the human completes visible checkout; it changes nothing and returns dates, rooms, inclusions, total, and terms without personal data.",
+    inputSchema: {
+      type: "object",
+      properties: { booking_ref: { type: "string", pattern: "^CZ-[A-Z0-9]{4,12}$" } },
+      required: ["booking_ref"],
+      additionalProperties: false,
+    },
+    annotations: read,
+  },
+];

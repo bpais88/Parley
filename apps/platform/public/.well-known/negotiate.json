@@ -1,0 +1,18 @@
+{
+  "version": "0.1",
+  "negotiable": true,
+  "property": {
+    "name": "Casa do Zêzere",
+    "website": "https://parleywebmcp.vercel.app/demo",
+    "city": "Ferreira do Zêzere, PT"
+  },
+  "direct_deal": {
+    "beats_ota_rate_up_to_pct": 12,
+    "perks": ["breakfast", "late_checkout", "upgrade_when_available"]
+  },
+  "channels": {
+    "webmcp": true
+  },
+  "group_threshold_rooms": 4,
+  "human_only": ["accept", "payment", "cancellation_elsewhere"]
+}

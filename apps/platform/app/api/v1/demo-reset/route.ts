@@ -14,7 +14,7 @@ import { demoProperty } from "@/lib/platform-data";
 
 export const runtime = "nodejs";
 
-export async function POST(request: Request) {
+async function resetDemo(request: Request) {
   const ownerAuthorized =
     Boolean(process.env.OWNER_PASSCODE) &&
     request.headers.get("x-owner-passcode") === process.env.OWNER_PASSCODE;
@@ -62,4 +62,12 @@ export async function POST(request: Request) {
   } catch (error) {
     return routeError(error);
   }
+}
+
+export async function GET(request: Request) {
+  return resetDemo(request);
+}
+
+export async function POST(request: Request) {
+  return resetDemo(request);
 }

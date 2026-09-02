@@ -63,3 +63,11 @@ The participant's canonical Vercel project is `parleywebmcp`. Its Root Directory
 - Externally exposed rows use UUID primary keys for compact hackathon implementation. This accepts UUIDv4 index locality costs because the dataset is deliberately tiny; a production design would use UUIDv7 or internal identity keys plus public IDs.
 - Hold creation is a single Postgres function guarded by a property-scoped transaction advisory lock. Availability is rechecked under that lock before insertion, preventing concurrent holds from overselling the 12-room inventory.
 - The checkout token is stored only as a SHA-256 hash, is visitor/session-bound, expires no later than the offer, and is consumed with booking creation. No card field exists in schemas or routes.
+
+## 2026-09-02 — Reduced WebMCP kit and demo surface
+
+- esbuild `0.28.2`, checked against the npm registry at build time, produces one minified IIFE. The committed browser asset is 22.7 KB raw and 7.8 KB gzipped, well below the 60 KB budget.
+- The static manifest is the single registration list for the approved eight tools. The production kit maps that list directly to `document.modelContext.registerTool`; the generated `tools.manifest.json` is committed for judge and test inspection.
+- The `?debug=1` shim activates only on `localhost` or `127.0.0.1`. There is no public query-string bypass in the deployed build.
+- The visible checkout contains only guest name and email. It obtains a short-lived checkout token after the human presses the offer button; it has no card field and clearly states that no charge is made.
+- The first demo remains on the Vercel origin. The Level 0 file advertises the open discovery convention, but no email channel or remote validator is claimed in the reduced scope.

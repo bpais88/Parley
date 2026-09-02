@@ -76,7 +76,14 @@ importers:
         specifier: workspace:*
         version: link:../shared
 
-  packages/kit: {}
+  packages/kit:
+    devDependencies:
+      esbuild:
+        specifier: 0.28.2
+        version: 0.28.2
+      tsx:
+        specifier: 4.23.13
+        version: 4.23.13
 
   packages/shared:
     dependencies:

@@ -63,6 +63,18 @@ h1 {
   text-decoration: none;
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.text-link {
+  color: #b8ccc2;
+  font-weight: 650;
+  text-underline-offset: 4px;
+}
+
 .diagnostic,
 .instructions {
   border: 1px solid rgba(188, 236, 211, 0.16);
