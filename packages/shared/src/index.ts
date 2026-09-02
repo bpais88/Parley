@@ -126,6 +126,53 @@ export const CounterSchema = z
     { message: "Provide exactly one target" },
   );
 
+export const StaySearchSchema = z
+  .object({
+    check_in: DateStringSchema,
+    check_out: DateStringSchema,
+    rooms: z.number().int().min(1).max(12),
+    guests_per_room: z.number().int().min(1).max(4),
+  })
+  .strict()
+  .refine((stay) => stay.check_out > stay.check_in, {
+    message: "check_out must be after check_in",
+  });
+
+export const HoldRoomsInputSchema = StaySearchSchema;
+
+export const RequestOfferInputSchema = z
+  .object({
+    hold_id: z.uuid(),
+    asks: z.array(AskSchema).max(6),
+    payment_preference: PaymentPreferenceSchema,
+    notes: z.string().max(200).optional(),
+    existing_booking: ExistingBookingSchema.optional(),
+  })
+  .strict();
+
+export const CheckoutTokenInputSchema = z
+  .object({ session_id: z.uuid() })
+  .strict();
+
+export const AcceptOfferInputSchema = z
+  .object({
+    checkout_token: z.string().min(32).max(256),
+    guest_name: z.string().trim().min(1).max(120),
+    guest_email: z.email().max(254),
+  })
+  .strict();
+
+export const ToolCallInputSchema = z
+  .object({
+    tool: z.string().min(1).max(80),
+    args: z.record(z.string(), z.unknown()),
+    session_id: z.uuid().optional(),
+    result_summary: z.string().min(1).max(400),
+    ok: z.boolean(),
+    latency_ms: z.number().int().min(0).max(120_000),
+  })
+  .strict();
+
 export const OfferReasonSchema = z.enum([
   "low_occupancy_perks",
   "high_occupancy_no_discount",
@@ -222,6 +269,12 @@ export type OccupancyBand = z.infer<typeof OccupancyBandSchema>;
 export type Request = z.infer<typeof RequestSchema>;
 export type ExistingBooking = z.infer<typeof ExistingBookingSchema>;
 export type Counter = z.infer<typeof CounterSchema>;
+export type StaySearch = z.infer<typeof StaySearchSchema>;
+export type HoldRoomsInput = z.infer<typeof HoldRoomsInputSchema>;
+export type RequestOfferInput = z.infer<typeof RequestOfferInputSchema>;
+export type CheckoutTokenInput = z.infer<typeof CheckoutTokenInputSchema>;
+export type AcceptOfferInput = z.infer<typeof AcceptOfferInputSchema>;
+export type ToolCallInput = z.infer<typeof ToolCallInputSchema>;
 export type Offer = z.infer<typeof OfferSchema>;
 export type NeedsOwner = z.infer<typeof NeedsOwnerSchema>;
 export type NotEligible = z.infer<typeof NotEligibleSchema>;

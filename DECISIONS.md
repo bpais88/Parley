@@ -54,3 +54,12 @@ The participant's canonical Vercel project is `parleywebmcp`. Its Root Directory
 - `guest_value_score_cents` measures total stay value: room-price savings across all room-nights plus the correctly unitized included-perk value.
 - A counter that cannot strictly improve total guest value returns the standing offer. At the final configured round it is marked `final` with reason `final_offer`.
 - Blackout ranges are represented as half-open property-local date intervals: `date_from` is included and `date_to` is excluded.
+
+## 2026-09-02 — Reduced platform persistence
+
+- Selected current registry releases after checking their official documentation: Drizzle ORM `0.45.2`, Drizzle Kit `0.31.10`, Neon serverless driver `1.1.0`, and `tsx` `4.23.13`.
+- The platform uses Drizzle's Neon HTTP driver because the API consists of short serverless queries and batches. `DATABASE_URL` is read lazily so static builds succeed before the human connects Neon.
+- The Postgres best-practices guidance shaped the schema: timezone-aware timestamps, integer cents, database checks, indexed foreign keys, composite indexes matching access paths, and short operations.
+- Externally exposed rows use UUID primary keys for compact hackathon implementation. This accepts UUIDv4 index locality costs because the dataset is deliberately tiny; a production design would use UUIDv7 or internal identity keys plus public IDs.
+- Hold creation is a single Postgres function guarded by a property-scoped transaction advisory lock. Availability is rechecked under that lock before insertion, preventing concurrent holds from overselling the 12-room inventory.
+- The checkout token is stored only as a SHA-256 hash, is visitor/session-bound, expires no later than the offer, and is consumed with booking creation. No card field exists in schemas or routes.

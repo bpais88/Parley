@@ -9,9 +9,12 @@
   "scripts": {
     "build": "pnpm --filter @parley/platform build",
     "build:kit": "pnpm --filter @parley/kit build",
+    "db:generate": "pnpm --filter @parley/platform db:generate",
+    "db:migrate": "pnpm --filter @parley/platform db:migrate",
     "dev": "pnpm --filter @parley/platform dev",
     "e2e": "playwright test --pass-with-no-tests",
     "lint": "eslint .",
+    "seed": "pnpm --filter @parley/platform seed",
     "test": "vitest run --passWithNoTests",
     "typecheck": "pnpm -r --if-present typecheck"
   },

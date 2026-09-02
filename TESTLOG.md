@@ -27,3 +27,14 @@
 - Worked example: GREEN — offer 1 €1,650 room total; offer 2 €1,530 room total / €1,560 including €30 city tax; ledger gross €1,530, in-kind €90, fee €45.90, net €1,394.10, OTA rack net €1,320, uplift €74.10, guest saving €120, corrected perk value €255; later counter returns the final standing offer.
 - Rebook example: GREEN — €106/night, €212 total, breakfast included, flexible terms, `beat_ota`, and “book here first, then cancel there” guardrail.
 - Additional coverage: occupancy bands, economic/cash/flexible floors, perk keep/drop behavior, high-occupancy zero-cost perks, monotonicity, strict inputs, owner escalation triggers, non-refundable rejection, and cancellation-deadline rejection.
+
+## Gate 2 — Reduced platform database and API
+
+- Status: PARTIAL — implementation is locally verified; live database execution is not yet observed.
+- Schema: GREEN — nine constrained/indexed tables plus the atomic `parley_create_hold` function generated in two migrations.
+- Migration consistency: GREEN — `drizzle-kit check`, 2026-09-02 23:04 BST.
+- Seed: IMPLEMENTED — Casa do Zêzere, 120 nights from 2026-09-01, worked-example nights at five rooms sold (~42%), blackout at 11/12 rooms, other dates at five or eight rooms sold. Not executed without `DATABASE_URL`.
+- API build: GREEN — bootstrap, availability, atomic holds, sessions, counters, status/expiry, panel checkout token, human acceptance, visitor-bound booking read, owner ledger, redacted tool activity, health, expiry cron handler, and authorized demo reset.
+- Safety unit tests: GREEN — recursive personal/card-field redaction, token hashing, rate limiting, and property-date range behavior.
+- Full verification: GREEN — `pnpm typecheck`, `pnpm lint`, `pnpm test` (26 passed), and `pnpm build`, 2026-09-02 23:04 BST.
+- Pending before Gate 2 can be green: connect Neon, set `DATABASE_URL`, migrate, seed, run database integration cases, configure `OWNER_PASSCODE` and `CRON_SECRET`, redeploy, and verify `/api/v1/health`.

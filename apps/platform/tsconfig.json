@@ -4,6 +4,9 @@
     "incremental": true,
     "jsx": "react-jsx",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "paths": {
+      "@/*": ["./*"]
+    },
     "plugins": [{ "name": "next" }]
   },
   "include": [
