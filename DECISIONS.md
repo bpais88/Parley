@@ -39,3 +39,7 @@ Versions were read from the npm registry immediately before scaffolding:
 - ESLint `9.39.5` instead of current `10.9.1` because ESLint 10 excludes Node.js 23; `eslint-config-next` remains `16.3.4`.
 
 Exact dependency versions are committed in the workspace manifests and lockfile. If a compatibility check rejects one of the newest independent tools, pin the newest compatible release and record it here.
+
+## 2026-09-02 — Vercel workspace detection
+
+The Vercel project deploys from the repository root so it can install the committed pnpm workspace and lockfile. Vercel's Next.js framework detector requires `next` in the root manifest even though the application owns the same pinned dependency under `apps/platform`. The root therefore lists Next.js `16.3.4` as a development dependency; the production build still runs only `@parley/platform` and outputs `apps/platform/.next`.
