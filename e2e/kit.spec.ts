@@ -49,6 +49,34 @@ async function mockPlatform(page: Page) {
         next_actions: ["search_availability"],
         property: { slug: "casa-do-zezere", name: "Casa do Zêzere", currency: "EUR" },
       };
+    } else if (path === "/api/v1/owner/ledger") {
+      body = {
+        ok: true,
+        human_summary: "One direct booking produced €74.10 versus OTA economics.",
+        next_actions: [],
+        totals: { bookings: 1, gross_cents: 153_000, net_cents: 139_410, uplift_vs_ota_cents: 7_410 },
+        bookings: [{
+          booking_ref: "CZ-7F3K",
+          created_at: "2026-09-02T22:00:00.000Z",
+          stay: { check_in: "2026-09-24", check_out: "2026-09-27", rooms: 5 },
+          offer: offerTwo,
+          ledger: {
+            gross_cents: 153_000,
+            inkind_cost_cents: 9_000,
+            platform_fee_cents: 4_590,
+            net_cents: 139_410,
+            ota_net_at_rack_cents: 132_000,
+            uplift_vs_ota_cents: 7_410,
+          },
+        }],
+      };
+    } else if (path === "/api/v1/tool-calls" && route.request().method() === "GET") {
+      body = {
+        ok: true,
+        human_summary: "Recent WebMCP activity is ready.",
+        next_actions: [],
+        calls: [{ id: 1, tool: "counter_offer", ok: true, latency_ms: 83, created_at: "2026-09-02T22:00:00.000Z" }],
+      };
     } else if (path === "/api/v1/availability") {
       body = {
         ok: true,
@@ -183,4 +211,13 @@ test("a human can complete checkout using buttons without card data", async ({ p
   await page.getByRole("button", { name: "Confirm booking" }).click();
   await expect(page.getByRole("heading", { name: "CZ-7F3K" })).toBeVisible();
   await expect(page.getByText("No payment was processed", { exact: false })).toBeVisible();
+});
+
+test("the owner sees the direct-versus-OTA ledger proof", async ({ page }) => {
+  await page.goto("/owner");
+  await page.getByLabel("Demo passcode").fill("parley-demo-2026");
+  await page.getByRole("button", { name: "Open owner view" }).click();
+  await expect(page.getByText("+€74.10").first()).toBeVisible();
+  await expect(page.getByText("CZ-7F3K")).toBeVisible();
+  await expect(page.getByText("counter_offer")).toBeVisible();
 });

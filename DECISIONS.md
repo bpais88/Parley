@@ -77,3 +77,9 @@ The participant's canonical Vercel project is `parleywebmcp`. Its Root Directory
 - Provisioned a Neon Free database through the Vercel Marketplace in `lhr1` and connected it to production, preview, and development for the canonical `parleywebmcp` project.
 - Neon authentication was disabled because Parley owns its visitor-cookie and owner-passcode boundaries; no separate end-user authentication product is needed for this demo.
 - The owner demo passcode is `parley-demo-2026`. The cron secret is generated, sensitive, and never committed.
+
+## 2026-09-02 — Owner evidence and public documentation
+
+- The reduced owner surface is intentionally read-focused: passcode gate, aggregate economics, expandable booking ledger, last 200 redacted tool calls, and explicit demo reset. Editable policy setup and escalation handling remain cut.
+- The documentation renderer is a small local Markdown subset rather than a new runtime dependency. RFC, Level 0, and integration documents are prerendered from the committed root files.
+- The README names every cut and mock explicitly. It does not claim the optional Cloudflare, Netlify, email, LLM, payment, or PMS work from the original draft.

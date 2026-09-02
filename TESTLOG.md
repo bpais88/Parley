@@ -75,3 +75,11 @@
 - Direct site-tool invocation: GREEN — `get_stay_context` returned the visible five-room 24–27 Sep stay, seeded property, next actions, and explicit human-only acceptance/payment/cancellation boundary.
 - Production HTTP checkout: GREEN — the separate live API run confirmed the negotiated booking and exact ledger values; visible browser checkout still needs a target ChatGPT manual screenshot run.
 - Status: PARTIAL — production data and tool registration are live; judge-prompt behavior and screenshots remain manual Gate 4 evidence.
+
+## Reduced owner panel and public docs
+
+- Owner panel build: GREEN — passcode gate, aggregate net-vs-OTA card, expandable per-booking economics, redacted activity list, and confirmed reset action.
+- Owner E2E: GREEN — mocked ledger rendered booking `CZ-7F3K`, recent `counter_offer`, and `+€74.10`; total browser E2E is now three passing tests, 2026-09-02 23:27 BST.
+- Docs build: initial RED — the renderer resolved root docs relative to `apps/platform`; corrected to the repository root. Retry GREEN with `/docs/rfc`, `/docs/level0`, and `/docs/integration` prerendered.
+- README: GREEN — live links, three-minute prompt, exact economics, eight-tool table, architecture, safety, mocks/cuts, commands, and test matrix are committed.
+- Regression: GREEN — typecheck, lint, production build, 28 Vitest tests, and three Playwright tests, 2026-09-02 23:27 BST.

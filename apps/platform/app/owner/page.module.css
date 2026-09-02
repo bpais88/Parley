@@ -1,0 +1,199 @@
+.page {
+  min-height: 100vh;
+  background: #0d211b;
+  color: #f3f4ec;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.shell {
+  width: min(1160px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 32px 0 80px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.brand {
+  color: #ecc27e;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+}
+
+.hotel {
+  margin-top: 3px;
+  font: 500 20px Georgia, serif;
+}
+
+.reset,
+.login button {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9px;
+  background: transparent;
+  color: white;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.intro {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  align-items: end;
+  padding: 52px 0 30px;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: #8fb5a5;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.intro h1 {
+  margin: 0;
+  font: 500 clamp(42px, 6vw, 70px) / 1 Georgia, serif;
+  letter-spacing: -0.04em;
+}
+
+.intro p:last-child {
+  max-width: 430px;
+  color: #a9bbb4;
+  line-height: 1.6;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(3, 1fr);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 17px;
+}
+
+.metric {
+  padding: 24px;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.metric:last-child { border: 0; }
+.metric span { display: block; color: #8fa59c; font-size: 11px; }
+.metric strong { display: block; margin-top: 8px; font: 500 27px Georgia, serif; }
+.metric:first-child { background: #143329; }
+.metric:first-child strong { color: #79d6ad; font-size: 37px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.card {
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.035);
+  padding: 22px;
+}
+
+.card h2 {
+  margin: 0 0 4px;
+  font: 500 22px Georgia, serif;
+}
+
+.subtle,
+.empty,
+.status {
+  color: #8fa59c;
+  font-size: 12px;
+}
+
+.booking {
+  margin-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 16px;
+}
+
+.booking summary {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.booking strong,
+.booking span { display: block; }
+.booking small { color: #879b92; }
+.booking summary > strong { color: #79d6ad; }
+
+.economics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.economics div {
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 9px;
+}
+
+.economics span { color: #84978f; font-size: 9px; text-transform: uppercase; }
+.economics b { display: block; margin-top: 3px; font-size: 12px; }
+
+.call {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 11px;
+}
+
+.call i { width: 7px; height: 7px; border-radius: 50%; background: #79d6ad; }
+.call i.bad { background: #e67c68; }
+.call code { overflow: hidden; color: #d7e5df; text-overflow: ellipsis; }
+.call span { color: #84978f; }
+
+.loginWrap {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 24px;
+  background: radial-gradient(circle at 50% 30%, #21493c, #0d211b 55%);
+}
+
+.login {
+  width: min(400px, 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  background: rgba(5, 18, 14, 0.45);
+  padding: 30px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+}
+
+.login h1 { margin: 5px 0; font: 500 34px Georgia, serif; }
+.login p { color: #a4b7af; line-height: 1.6; }
+.login input { width: 100%; margin: 10px 0; border: 1px solid #ffffff29; border-radius: 9px; background: #ffffff0d; color: white; padding: 12px; }
+.login button { width: 100%; background: #ecc27e; color: #2a2116; }
+.error { color: #ffb6a8!important; }
+
+@media (max-width: 760px) {
+  .intro { display: block; }
+  .metrics { grid-template-columns: 1fr 1fr; }
+  .metric { border-bottom: 1px solid rgba(255, 255, 255, 0.12); }
+  .grid { grid-template-columns: 1fr; }
+  .economics { grid-template-columns: 1fr 1fr; }
+}
