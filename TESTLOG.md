@@ -83,3 +83,19 @@
 - Docs build: initial RED — the renderer resolved root docs relative to `apps/platform`; corrected to the repository root. Retry GREEN with `/docs/rfc`, `/docs/level0`, and `/docs/integration` prerendered.
 - README: GREEN — live links, three-minute prompt, exact economics, eight-tool table, architecture, safety, mocks/cuts, commands, and test matrix are committed.
 - Regression: GREEN — typecheck, lint, production build, 28 Vitest tests, and three Playwright tests, 2026-09-02 23:27 BST.
+
+## Live browser walkthrough
+
+- WebMCP sequence: GREEN — the deployed in-app browser called `set_dates`, `search_availability`, `hold_rooms`, `request_offer`, `counter_offer`, and `get_offer_status` against hosted Neon. The visible panel showed both identities, six green activity rows, a 14-minute hold, and the €1,560 all-in NRF offer.
+- Human checkpoint: GREEN — the visible Accept & pay button opened a modal containing name/email only and the explicit “no charge · no card details collected” notice. No acceptance or payment tool existed.
+- Confirmation: GREEN — human click created booking `CZ-A615C9`; the panel showed €1,560 all-in and “No payment was processed”; the page's `get_booking` WebMCP tool read the same visitor-bound confirmation.
+- Owner economics: GREEN — the deployed passcode view showed one booking, €1,530 gross, €1,394.10 hotel net, +€74.10 vs OTA, and the seven-call activity trail.
+- Demo readiness: GREEN — the explicit owner reset succeeded afterward, returning the shared demo to seeded availability.
+- Manual evidence still required: run the natural-language judge prompt in a fresh ChatGPT Sol/Terra personal-account tab and retain the screenshots/model/timing. Direct site-tool runtime invocation is observed; conversational tool selection is not yet claimed.
+- Active-run cron safety: GREEN — with one live hosted-database hold, the scheduled GET reset returned `skipped: true`; the explicit owner POST reset then cleared state successfully, 2026-09-02 23:32 BST.
+
+## Repository preflight
+
+- GitHub visibility: GREEN — <https://github.com/bpais88/Parley> is public.
+- License detection: GREEN — GitHub reports MIT.
+- CI: GREEN — latest `main` workflow completed successfully.

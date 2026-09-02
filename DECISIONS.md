@@ -83,3 +83,4 @@ The participant's canonical Vercel project is `parleywebmcp`. Its Root Directory
 - The reduced owner surface is intentionally read-focused: passcode gate, aggregate economics, expandable booking ledger, last 200 redacted tool calls, and explicit demo reset. Editable policy setup and escalation handling remain cut.
 - The documentation renderer is a small local Markdown subset rather than a new runtime dependency. RFC, Level 0, and integration documents are prerendered from the committed root files.
 - The README names every cut and mock explicitly. It does not claim the optional Cloudflare, Netlify, email, LLM, payment, or PMS work from the original draft.
+- Scheduled hourly reset skips when any unexpired active hold exists, so cron cannot erase a judge's in-progress negotiation. The owner's explicit POST reset remains immediate and confirmation-gated in the UI.

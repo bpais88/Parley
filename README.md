@@ -1,5 +1,7 @@
 # Parley
 
+[![CI](https://github.com/bpais88/Parley/actions/workflows/ci.yml/badge.svg)](https://github.com/bpais88/Parley/actions/workflows/ci.yml)
+
 **Negotiable direct booking for the agentic web.**
 
 [Live hotel](https://parleywebmcp.vercel.app/demo) · [Owner ledger](https://parleywebmcp.vercel.app/owner) · [RFC](https://parleywebmcp.vercel.app/docs/rfc) · [Level 0](https://parleywebmcp.vercel.app/docs/level0)

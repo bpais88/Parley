@@ -1,4 +1,4 @@
-import { eq, inArray, sql } from "drizzle-orm";
+import { and, count, eq, gt, inArray, sql } from "drizzle-orm";
 import { getDatabase } from "@/db/client";
 import {
   bookings,
@@ -30,6 +30,26 @@ async function resetDemo(request: Request) {
     const property = await demoProperty(db);
     if (!property) {
       return failure("property_not_found", "The demo property has not been seeded.", 503);
+    }
+
+    if (request.method === "GET") {
+      const [{ activeHolds }] = await db
+        .select({ activeHolds: count() })
+        .from(holds)
+        .where(
+          and(
+            eq(holds.propertyId, property.id),
+            eq(holds.status, "active"),
+            gt(holds.expiresAt, new Date()),
+          ),
+        );
+      if (activeHolds > 0) {
+        return success(
+          "The scheduled reset was skipped because a guest has an active room hold.",
+          [],
+          { skipped: true, active_holds: activeHolds },
+        );
+      }
     }
 
     await db.delete(ledger).where(eq(ledger.propertyId, property.id));
