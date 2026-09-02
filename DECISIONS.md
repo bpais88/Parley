@@ -45,3 +45,12 @@ Exact dependency versions are committed in the workspace manifests and lockfile.
 The Vercel project deploys from the repository root so it can install the committed pnpm workspace and lockfile. Vercel's Next.js framework detector requires `next` in the root manifest even though the application owns the same pinned dependency under `apps/platform`. The root therefore lists Next.js `16.3.4` as a development dependency; the production build still runs only `@parley/platform` and outputs `apps/platform/.next`.
 
 The participant's canonical Vercel project is `parleywebmcp`. Its Root Directory is the repository root; the stable production alias is `https://parleywebmcp.vercel.app`.
+
+## 2026-09-02 — Shared contracts and deterministic engine
+
+- Zod `4.5.4`, the current registry release checked at implementation time, owns the strict runtime schemas in `packages/shared`.
+- Perk schemas carry an explicit unit. Breakfast uses `guest_night`; late checkout uses `room_stay`. Ledger and monotonic-value calculations use those units rather than multiplying every perk by room-nights.
+- Floor components retain cent precision, then the final offered per-room-night price is rounded upward to a whole euro. Thus the €104.50 flexible floor becomes a minimum whole-euro offer of €105, while the rebook target €105.60 becomes €106.
+- `guest_value_score_cents` measures total stay value: room-price savings across all room-nights plus the correctly unitized included-perk value.
+- A counter that cannot strictly improve total guest value returns the standing offer. At the final configured round it is marked `final` with reason `final_offer`.
+- Blackout ranges are represented as half-open property-local date intervals: `date_from` is included and `date_to` is excluded.

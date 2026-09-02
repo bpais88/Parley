@@ -1,4 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@parley/shared": ["../shared/src/index.ts"]
+    }
+  },
   "include": ["src/**/*.ts"]
 }
