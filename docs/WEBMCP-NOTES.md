@@ -32,15 +32,16 @@ document.modelContext.registerTool({
 });
 ```
 
-Local production build and HTTP smoke test are green. Browser discovery and invocation are not inferable from an ordinary browser and must be observed by the participant.
+Local production build and HTTP smoke test are green.
 
-## Human observations — pending
+## Runtime observations
 
-- ChatGPT desktop model/account type:
-- Tool discovered:
-- Tool result shown:
-- Confirmation prompt, if any:
-- `unregisterTool` observed:
-- Result-size behavior observed:
-- Chrome flag result:
-- Screenshot locations:
+- Runtime: Codex in-app browser, 2026-09-02 22:48 BST.
+- Page status: `Ping registered. The browser agent can now call it.`
+- Tool discovered: `ping`, with the expected description, strict empty object schema, `readOnlyHint: true`, origin, and page URL.
+- Tool result: `{ ok: true, human_summary: "pong from Parley", next_actions: [] }`.
+- Confirmation prompt: none during the direct read-only runtime invocation.
+- `unregisterTool`: not observed; still unconfirmed for the ChatGPT subset.
+- Result-size behavior: not empirically tested; no platform limit is claimed.
+- Connected Chrome result: the page loaded, but `document.modelContext` was absent because WebMCP testing was not enabled in that Chrome profile. This is an environment result, not a registration failure.
+- Sol/Terra personal-account rerun and screenshots: still required for final submission evidence.
