@@ -43,3 +43,5 @@ Exact dependency versions are committed in the workspace manifests and lockfile.
 ## 2026-09-02 — Vercel workspace detection
 
 The Vercel project deploys from the repository root so it can install the committed pnpm workspace and lockfile. Vercel's Next.js framework detector requires `next` in the root manifest even though the application owns the same pinned dependency under `apps/platform`. The root therefore lists Next.js `16.3.4` as a development dependency; the production build still runs only `@parley/platform` and outputs `apps/platform/.next`.
+
+The participant's canonical Vercel project is `parleywebmcp`. Its Root Directory is the repository root; the stable production alias is `https://parleywebmcp.vercel.app`.
