@@ -34,7 +34,7 @@ Versions were read from the npm registry immediately before scaffolding:
 
 - Node.js `23.3.0` and pnpm `10.29.3` on the development machine.
 - Next.js `16.3.4`; React and React DOM `19.2.8`.
-- TypeScript `7.0.2`; Playwright `1.62.1`.
+- TypeScript `6.0.3` instead of current `7.0.2`, matching the `<6.1.0` peer range of the TypeScript ESLint packages used by Next.js; Playwright `1.62.1`.
 - Vitest `3.2.7` instead of current `4.1.11` because Vitest 4 excludes the development machine's Node.js 23 runtime.
 - ESLint `9.39.5` instead of current `10.9.1` because ESLint 10 excludes Node.js 23; `eslint-config-next` remains `16.3.4`.
 

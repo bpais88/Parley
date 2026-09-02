@@ -1,0 +1,135 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #08110f;
+  color: #ecf8f1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(55, 181, 129, 0.2), transparent 36rem),
+    linear-gradient(145deg, #08110f 0%, #0d1c18 58%, #111815 100%);
+}
+
+a {
+  color: inherit;
+}
+
+.shell {
+  width: min(760px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 14vh 0 80px;
+}
+
+.eyebrow {
+  margin: 0 0 16px;
+  color: #74e0ae;
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+h1 {
+  max-width: 680px;
+  margin: 0;
+  font-size: clamp(2.7rem, 8vw, 5.5rem);
+  line-height: 0.96;
+  letter-spacing: -0.055em;
+}
+
+.lede {
+  max-width: 620px;
+  margin: 28px 0 36px;
+  color: #b8ccc2;
+  font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+  line-height: 1.55;
+}
+
+.button {
+  display: inline-flex;
+  padding: 13px 18px;
+  border: 1px solid #7ce8b6;
+  border-radius: 999px;
+  background: #7ce8b6;
+  color: #092016;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.diagnostic,
+.instructions {
+  border: 1px solid rgba(188, 236, 211, 0.16);
+  border-radius: 20px;
+  background: rgba(15, 35, 29, 0.72);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.22);
+}
+
+.diagnostic {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 22px;
+}
+
+.diagnostic p {
+  margin: 8px 0 0;
+  color: #9fb7aa;
+}
+
+.status-dot {
+  flex: 0 0 auto;
+  width: 12px;
+  height: 12px;
+  margin-top: 4px;
+  border-radius: 50%;
+  background: #e6b04a;
+  box-shadow: 0 0 0 5px rgba(230, 176, 74, 0.12);
+}
+
+.status-dot--good {
+  background: #62db9f;
+  box-shadow: 0 0 0 5px rgba(98, 219, 159, 0.12);
+}
+
+.instructions {
+  margin-top: 18px;
+  padding: 24px;
+}
+
+.instructions h2 {
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+}
+
+.instructions ol {
+  margin: 0;
+  padding-left: 22px;
+  color: #b8ccc2;
+  line-height: 1.75;
+}
+
+.instructions p {
+  margin: 18px 0 0;
+  color: #b8ccc2;
+}
+
+code {
+  border-radius: 6px;
+  background: rgba(124, 232, 182, 0.1);
+  color: #97f1c7;
+  padding: 2px 6px;
+}
+
+@media (max-width: 540px) {
+  .shell {
+    width: min(100% - 28px, 760px);
+    padding-top: 10vh;
+  }
+}
