@@ -124,3 +124,5 @@
 - Persistence: GREEN — migration `0003_lovely_killer_shrike.sql` applied to hosted Neon with a backfill-safe two-step NOT NULL change. The live schema accepted a full rules+inbox pilot request; its exact `qa-rules@parley.invalid` row was immediately removed.
 - Browser: GREEN — desktop visual review is coherent, 390 px viewport has no horizontal overflow, and axe 4.12.1 reports zero violations.
 - Regression: GREEN — typecheck, lint, 31 Vitest tests, three Chromium E2E flows, and the Next.js production build, 2026-09-03 05:56 BST.
+- Production: GREEN — the canonical landing page exposes exactly ten onboarding tools. Direct calls to `get_parley_overview`, `configure_negotiation_rules`, and `set_guest_enquiry_inbox` returned structured results and updated the shared visible form; `activated` stayed false and the human pilot consent remained unchecked.
+- Production browser: GREEN — axe 4.12.1 reported zero violations, the 390 px viewport had no horizontal overflow, and `/api/v1/health` reported connected Neon with ready inventory, 2026-09-03 05:59 BST.
