@@ -153,3 +153,11 @@
 - Human boundary: GREEN — `get_offer_status` reported `checkout_opened: false` and no acceptance/payment tool exists. The run stopped before acceptance.
 - Regression: GREEN — `pnpm build:kit` (8,286 bytes gzipped, nine tools), typecheck, lint, 31 Vitest tests, three Playwright Chromium flows, and the Next.js production build.
 - Cleanup: GREEN — authorized demo reset completed after the native run; `/api/v1/health` reported connected Neon and ready inventory, 2026-09-03 07:06 BST.
+
+### Fresh natural-language agent run
+
+- G4 prompt 3: GREEN — Instinct reported a fresh-tab native WebMCP run selected its sequence from the natural-language offsite prompt alone: `get_stay_context` → `set_dates` → `search_availability` → `get_negotiation_policy` → `hold_rooms` → `request_offer` → `counter_offer` → `get_offer_status`, 2026-09-03 08:22 BST.
+- Tool selection: GREEN — the agent discovered nine tools and chose `payment_preference: prepaid_ok` for both offer calls because “best deal” allowed a conditional quote without consenting to payment. The visible five-room hold and `get_stay_context.rooms: 5` agreed.
+- Contract and result: GREEN — both offer-producing calls returned top-level `offer`; the final result was €153,000 room charges / €156,000 all-in, €102 per room-night, NRF, prepay now, non-refundable, with breakfast and late checkout.
+- Agent explanation: GREEN — it surfaced the complete trade-off: the conditional offer is €10 over the stated all-in budget; €168,000 all-in preserves flexibility; no refundable option fits €155,000; the floor is reached and another round would not improve it.
+- Human boundary: GREEN — the agent stopped with the visible Accept & pay button untouched, `checkout_opened: false`, and restated that only the guest can accept. Evidence was supplied as a screenshot in the project conversation; this entry records an external agent report rather than a locally scripted run.
