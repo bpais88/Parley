@@ -31,6 +31,7 @@ export async function POST(request: Request) {
       .values({
         visitorId: visitor,
         hotelName: input.hotel_name,
+        city: input.city,
         contactEmail: input.contact_email.toLowerCase(),
         website: normalizedWebsite,
         rooms: input.rooms,
@@ -42,6 +43,7 @@ export async function POST(request: Request) {
         target: [pilotSignups.contactEmail, pilotSignups.website],
         set: {
           hotelName: input.hotel_name,
+          city: input.city,
           rooms: input.rooms,
           otaCommissionPct: input.ota_commission_pct,
           negotiationRules: input.negotiation_rules,

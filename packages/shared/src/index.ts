@@ -200,6 +200,7 @@ export const HotelContactSettingsSchema = z
 export const PilotSignupInputSchema = z
   .object({
     hotel_name: z.string().trim().min(2).max(120),
+    city: z.string().trim().min(2).max(120),
     contact_email: z.email().max(254),
     website: z.url().max(500),
     rooms: z.number().int().min(1).max(2000),

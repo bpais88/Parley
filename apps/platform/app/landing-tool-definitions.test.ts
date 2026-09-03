@@ -26,6 +26,7 @@ describe("Parley landing-page WebMCP tools", () => {
   it("requires explicit consent before the API accepts a pilot request", () => {
     const request = {
       hotel_name: "Harbour House",
+      city: "Lisbon",
       contact_email: "owner@harbour.example",
       website: "https://harbour.example",
       rooms: 32,

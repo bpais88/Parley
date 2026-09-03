@@ -243,6 +243,7 @@ export const pilotSignups = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     visitorId: text("visitor_id").notNull(),
     hotelName: text("hotel_name").notNull(),
+    city: text("city").notNull(),
     contactEmail: text("contact_email").notNull(),
     website: text("website").notNull(),
     rooms: integer("rooms").notNull(),
