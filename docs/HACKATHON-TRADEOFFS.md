@@ -109,6 +109,12 @@ The vertical flow works, but a production release should also address:
 7. Add multi-room-type and multi-property support.
 8. Build negotiate-anywhere and broader Level 0 discovery after the embedded flow is operating reliably.
 
+## Future design exploration method
+
+For a later visual refresh, use the divergent-design technique shared by Will Peng: generate a fresh long random alphanumeric seed for each exploration, interpret patterns in that seed as prompts for palette, typography, layout, rhythm, and other creative decisions, then use product-design judgment to turn the direction into a coherent interface. Source: <https://x.com/wp/status/2095196305354326405>.
+
+Treat the seed as inspiration, not a requirement. Every candidate should still preserve Parley’s hotelier-friendly language, visible human control, accessibility, mobile fit, and the clarity of the guest/agent/hotel identities. Compare several materially different candidates against the same key journeys before choosing one; do not apply this method to the frozen hackathon submission UI.
+
 ## How to describe the submission accurately
 
 Parley is a deployed, database-backed proof of negotiable direct booking over WebMCP. It demonstrates the complete decision loop—guest brief, live hold, deterministic offer, counter, human acceptance, confirmation, and hotel economics—using a fictional property and no-charge checkout. It is not yet a production booking engine, payment processor, PMS integration, email-delivery platform, or multi-property hotel back office.
