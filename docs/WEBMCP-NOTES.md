@@ -45,3 +45,9 @@ Local production build and HTTP smoke test are green.
 - Result-size behavior: not empirically tested; no platform limit is claimed.
 - Connected Chrome result: the page loaded, but `document.modelContext` was absent because WebMCP testing was not enabled in that Chrome profile. This is an environment result, not a registration failure.
 - Sol/Terra personal-account rerun and screenshots: still required for final submission evidence.
+
+## Additional native-agent observations
+
+- Instinct's native WebMCP runtime exposed `getTools()` as asynchronous. Consumers must await it; reading the return value synchronously can look like an empty object even though the page tools are registered correctly.
+- A fresh natural-language run discovered all nine hotel tools and all ten hotel-onboarding tools without the localhost debug shim.
+- An inert `__probe` tool seen during one test was registered by the external agent while examining the runtime. It was session-scoped and is not part of either committed Parley manifest.

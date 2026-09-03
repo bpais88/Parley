@@ -161,3 +161,13 @@
 - Contract and result: GREEN — both offer-producing calls returned top-level `offer`; the final result was €153,000 room charges / €156,000 all-in, €102 per room-night, NRF, prepay now, non-refundable, with breakfast and late checkout.
 - Agent explanation: GREEN — it surfaced the complete trade-off: the conditional offer is €10 over the stated all-in budget; €168,000 all-in preserves flexibility; no refundable option fits €155,000; the floor is reached and another round would not improve it.
 - Human boundary: GREEN — the agent stopped with the visible Accept & pay button untouched, `checkout_opened: false`, and restated that only the guest can accept. Evidence was supplied as a screenshot in the project conversation; this entry records an external agent report rather than a locally scripted run.
+
+### Fresh hotelier-onboarding agent run
+
+- Hotel onboarding: GREEN — Instinct reported that a fresh native WebMCP run discovered all ten landing-page tools and mapped the natural-language setup brief to matching structured fields, 2026-09-03 08:29 BST.
+- Rules: GREEN — the visible page reflected 20% OTA commission, a protected 5% uplift, breakfast plus late checkout on quiet dates, and owner review above eight rooms. All calls returned `ok: true`.
+- Enquiry consent: GREEN — `set_guest_enquiry_inbox` populated `reservations@example.com`, set `guest_contact_policy: ask_each_time`, and showed “No clear yes, no contact details.” No message was sent.
+- Enrollment boundary: GREEN — `prepare_pilot_signup` returned `prepared: true, submitted: false`; the visible consent checkbox remained unchecked, the request button was not pressed, and the page stated that nothing had been submitted or stored.
+- Runtime: GREEN — the console had no page errors. `getTools()` was observed to be asynchronous and required `await`; an inert session-scoped `__probe` tool registered by the external tester was not part of Parley's ten-tool manifest.
+- Scope boundary: NOT IMPLEMENTED — this validates hotel setup and inbox policy only. Outbound email delivery, `/negotiate`, and the hotel Match/Counter/Decline response page remain documented hackathon cuts and have not been tested or claimed.
+- Evidence: two screenshots were supplied in the project conversation; this entry records an external agent report rather than a locally scripted run.
