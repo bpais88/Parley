@@ -126,7 +126,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   {
     name: "counter_offer",
     description:
-      "Submits one price counter to the open hotel negotiation. Use prepaid_ok when the guest permits a conditional prepaid, non-refundable offer and wants the lowest price; use flexible when they cannot prepay. It advances the round but never accepts or pays.",
+      "Submits one price counter to the open hotel negotiation. Use prepaid_ok to request the lowest conditional quote when the guest asks for the best deal; it only lets the hotel quote prepaid, non-refundable terms for review and does not consent, accept, or pay. Use flexible when the guest says they cannot prepay or require refundable terms.",
     inputSchema: {
       type: "object",
       properties: {
@@ -138,7 +138,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
           type: "string",
           enum: ["flexible", "prepaid_ok"],
           description:
-            "Use prepaid_ok only when the guest allows the hotel to return a prepaid, non-refundable offer for review; this does not accept or pay.",
+            "Use prepaid_ok for a lowest-price conditional quote unless the guest says they cannot prepay or require refundable terms; this only returns an offer for review and does not consent, accept, or pay.",
         },
         message: { type: "string", maxLength: 200 },
       },

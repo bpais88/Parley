@@ -151,5 +151,5 @@
 - Offer contract: GREEN — `request_offer` returned the first €165,000 room offer under the top-level `offer` key; `counter_offer` uses the same wrapper.
 - Counter semantics: GREEN — a €140,000 target with `payment_preference: prepaid_ok` returned €102 per room-night, €153,000 room total / €156,000 all-in, NRF, `Prepay now`, breakfast and late checkout, and reasons `prepay_required` plus `floor_reached`. The earlier €157,500 flexible response was correct for the native call's explicit `payment_preference: flexible`.
 - Human boundary: GREEN — `get_offer_status` reported `checkout_opened: false` and no acceptance/payment tool exists. The run stopped before acceptance.
-- Regression: GREEN — `pnpm build:kit` (8,271 bytes gzipped, nine tools), typecheck, lint, 31 Vitest tests, three Playwright Chromium flows, and the Next.js production build.
+- Regression: GREEN — `pnpm build:kit` (8,286 bytes gzipped, nine tools), typecheck, lint, 31 Vitest tests, three Playwright Chromium flows, and the Next.js production build.
 - Cleanup: GREEN — authorized demo reset completed after the native run; `/api/v1/health` reported connected Neon and ready inventory, 2026-09-03 07:06 BST.
