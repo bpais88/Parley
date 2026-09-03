@@ -229,3 +229,30 @@ export const toolCalls = pgTable(
     check("tool_calls_latency_check", sql`${table.latencyMs} >= 0`),
   ],
 );
+
+export const pilotSignups = pgTable(
+  "pilot_signups",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    visitorId: text("visitor_id").notNull(),
+    hotelName: text("hotel_name").notNull(),
+    contactEmail: text("contact_email").notNull(),
+    website: text("website").notNull(),
+    rooms: integer("rooms").notNull(),
+    otaCommissionPct: integer("ota_commission_pct").notNull(),
+    status: text("status").notNull().default("new"),
+    createdAt,
+  },
+  (table) => [
+    uniqueIndex("pilot_signups_email_website_uidx").on(
+      table.contactEmail,
+      table.website,
+    ),
+    index("pilot_signups_created_idx").on(table.createdAt),
+    check("pilot_signups_rooms_check", sql`${table.rooms} between 1 and 2000`),
+    check(
+      "pilot_signups_commission_check",
+      sql`${table.otaCommissionPct} between 0 and 40`,
+    ),
+  ],
+);

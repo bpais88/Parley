@@ -173,6 +173,17 @@ export const ToolCallInputSchema = z
   })
   .strict();
 
+export const PilotSignupInputSchema = z
+  .object({
+    hotel_name: z.string().trim().min(2).max(120),
+    contact_email: z.email().max(254),
+    website: z.url().max(500),
+    rooms: z.number().int().min(1).max(2000),
+    ota_commission_pct: z.number().int().min(0).max(40),
+    consent_to_contact: z.literal(true),
+  })
+  .strict();
+
 export const OfferReasonSchema = z.enum([
   "low_occupancy_perks",
   "high_occupancy_no_discount",
@@ -275,6 +286,7 @@ export type RequestOfferInput = z.infer<typeof RequestOfferInputSchema>;
 export type CheckoutTokenInput = z.infer<typeof CheckoutTokenInputSchema>;
 export type AcceptOfferInput = z.infer<typeof AcceptOfferInputSchema>;
 export type ToolCallInput = z.infer<typeof ToolCallInputSchema>;
+export type PilotSignupInput = z.infer<typeof PilotSignupInputSchema>;
 export type Offer = z.infer<typeof OfferSchema>;
 export type NeedsOwner = z.infer<typeof NeedsOwnerSchema>;
 export type NotEligible = z.infer<typeof NotEligibleSchema>;

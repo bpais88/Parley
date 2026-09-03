@@ -4,7 +4,7 @@
 
 **Negotiable direct booking for the agentic web.**
 
-[Live hotel](https://parleywebmcp.vercel.app/demo) · [Owner ledger](https://parleywebmcp.vercel.app/owner) · [RFC](https://parleywebmcp.vercel.app/docs/rfc) · [Level 0](https://parleywebmcp.vercel.app/docs/level0)
+[Parley for hotels](https://parleywebmcp.vercel.app) · [Live hotel](https://parleywebmcp.vercel.app/demo) · [Owner ledger](https://parleywebmcp.vercel.app/owner) · [RFC](https://parleywebmcp.vercel.app/docs/rfc) · [Level 0](https://parleywebmcp.vercel.app/docs/level0)
 
 Owner demo passcode: `parley-demo-2026`
 
@@ -25,6 +25,8 @@ Two shorter prompts:
 > I already have a refundable Booking.com reservation for these dates at €120 per night, cancellable in six days. Can this hotel beat it? Do not cancel anything.
 
 Every flow also works by clicking the panel with no agent present.
+
+Hotel owners can also open the [Parley homepage](https://parleywebmcp.vercel.app) with their agent. A separate eight-tool onboarding surface explains the product, estimates recoverable commission, fills the shared hotel profile, and reveals a copy-ready Level 0 manifest or install snippet. The agent may prepare the pilot form, but cannot consent, submit enrollment, publish code, or activate a hotel; those remain visible human actions.
 
 ## Why WebMCP
 
@@ -110,8 +112,8 @@ Database setup requires `DATABASE_URL`, followed by `pnpm db:migrate` and `pnpm 
 
 | Layer | Evidence |
 |---|---|
-| Engine and schemas | 28 Vitest tests overall; exact worked example, floors, bands, perks, monotonicity, round cap, rebook guards |
-| Tool contract | Eight unique tools, strict schemas, annotations, description quality, forbidden-name check |
+| Engine and schemas | 31 Vitest tests overall; exact worked example, floors, bands, perks, monotonicity, round cap, rebook guards |
+| Tool contract | Eight hotel tools plus eight landing-page onboarding tools; unique names, strict schemas, annotations, description quality, forbidden-action checks |
 | Browser E2E | Agent-shim sequence, clicks-only checkout, owner +€74.10 ledger assertion |
 | Hosted integration | Real availability → hold → offer → counter → token → confirm → booking → owner ledger against Neon |
 | WebMCP runtime | Deployed page tools discovered and directly invoked in the in-app browser; final Sol/Terra prompt screenshots remain in `TESTLOG.md` until observed |

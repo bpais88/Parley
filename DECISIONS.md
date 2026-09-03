@@ -84,3 +84,12 @@ The participant's canonical Vercel project is `parleywebmcp`. Its Root Directory
 - The documentation renderer is a small local Markdown subset rather than a new runtime dependency. RFC, Level 0, and integration documents are prerendered from the committed root files.
 - The README names every cut and mock explicitly. It does not claim the optional Cloudflare, Netlify, email, LLM, payment, or PMS work from the original draft.
 - Scheduled hourly reset skips when any unexpired active hold exists, so cron cannot erase a judge's in-progress negotiation. The owner's explicit POST reset remains immediate and confirmation-gated in the UI.
+
+## 2026-09-03 — Hotel acquisition landing page and WebMCP onboarding
+
+- The root route is now Parley's public hotel-facing landing page rather than a demo-directory placeholder. It explains the commission-split economics, links to the live hotel and public protocol docs, and includes a shared setup studio.
+- The landing page registers a separate, focused set of eight WebMCP onboarding tools. They can explain Parley, estimate indicative upside, populate visible hotel fields, reveal the Level 0 manifest or script snippet, and prepare a pilot form.
+- Enrollment remains human-only: no tool can submit the form, check consent, publish website code, provision a property key, or activate a hotel. The API requires `consent_to_contact: true`, and the visible checkbox resets to unchecked when an agent prepares the form.
+- Level 0 JSON is immediately copyable and vendor-neutral. The script snippet truthfully retains `YOUR_PROPERTY_KEY` until a pilot hotel is provisioned; it does not imply that pasting an unissued key activates service.
+- Cross-route links from the WebMCP landing surface use full document navigation. This prevents a Next.js client transition from mixing the landing tool set with the hotel demo's static tool set when `unregisterTool` is unavailable.
+- Pilot requests are stored in an additive `pilot_signups` table with normalized websites, lower-cased emails, a five-per-minute visitor limit, and an email+website uniqueness constraint. A verified QA row was removed immediately after the endpoint test.

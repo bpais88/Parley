@@ -3,8 +3,9 @@ import type { ReactNode } from "react";
 import "./styles.css";
 
 export const metadata: Metadata = {
-  description: "Gate 0 runtime proof for Parley",
-  title: "Parley WebMCP",
+  description:
+    "Parley turns hotel websites into agent-ready direct-booking channels with deterministic negotiation and human-only acceptance.",
+  title: "Parley — Negotiable direct booking",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

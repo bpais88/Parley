@@ -316,7 +316,7 @@ function explanationFor(
     return "That is the best we can do while still beating what an OTA pays us.";
   }
   if (reasons.includes("low_occupancy_perks")) {
-    return `It is a quieter stay for us, so ${inclusions.join(" and ")} are on the house.`;
+    return `It is a quieter stay for us, so ${inclusions.map((item) => item.replaceAll("_", " ")).join(" and ")} are on the house.`;
   }
   if (reasons.includes("high_occupancy_no_discount")) {
     return "Demand is high for those dates, so the flexible direct rate is our best automatic offer.";
