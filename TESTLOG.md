@@ -126,3 +126,14 @@
 - Regression: GREEN — typecheck, lint, 31 Vitest tests, three Chromium E2E flows, and the Next.js production build, 2026-09-03 05:56 BST.
 - Production: GREEN — the canonical landing page exposes exactly ten onboarding tools. Direct calls to `get_parley_overview`, `configure_negotiation_rules`, and `set_guest_enquiry_inbox` returned structured results and updated the shared visible form; `activated` stayed false and the human pilot consent remained unchecked.
 - Production browser: GREEN — axe 4.12.1 reported zero violations, the 390 px viewport had no horizontal overflow, and `/api/v1/health` reported connected Neon with ready inventory, 2026-09-03 05:59 BST.
+
+## Production end-to-end retest
+
+- Hotel onboarding first run: RED — all four agent setup calls succeeded, but the visible human pilot submission returned HTTP 400 because `city` existed in the shared page profile and was rejected by the strict pilot API schema.
+- Fix: GREEN — added `city` to the shared schema, API persistence, and `pilot_signups`; applied the backfill-safe `0004_wet_slyde.sql` migration and redeployed. The repeated journey completed through the human consent checkbox and button, and `get_pilot_signup_status` returned `submitted`.
+- Persistence proof: GREEN — Neon contained the exact test hotel name, Lisbon city, 18 rooms, 19% commission, all six negotiation settings, three preferred perks, `ask_each_time`, and the configured reservations inbox.
+- Guest negotiation: GREEN — production WebMCP calls set 24–27 Sep 2026 for five rooms, found seven Standard rooms at 42% occupancy, held five, offered €1,650 room revenue with breakfast and late checkout, and countered to €1,530 NRF / €1,560 including city tax.
+- Human-only checkout: GREEN — `get_offer_status` reported `checkout_opened: false` before the visible Accept & pay click and explicitly stated that no acceptance/payment tool exists. The human modal contained name and email only, stated that no payment is processed, and confirmed test booking `CZ-EF4E3E`; `get_booking` returned the same dates, inclusions, terms, and totals.
+- Owner proof: GREEN — the deployed passcode view showed one direct booking, €1,530 revenue, €1,394.10 hotel net, and +€74.10 versus OTA.
+- Cleanup: GREEN — removed the exact QA pilot row, ran the authorized demo reset, verified both test signup and booking counts returned to zero, and confirmed `/api/v1/health` reports connected Neon with ready inventory.
+- Regression: GREEN — typecheck, lint, 31 Vitest tests, three Playwright Chromium flows, production build, and migration integrity check, 2026-09-03 06:33 BST.
