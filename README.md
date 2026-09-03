@@ -114,6 +114,8 @@ pnpm build
 
 Database setup requires `DATABASE_URL`, followed by `pnpm db:migrate` and `pnpm seed`. Production also uses `OWNER_PASSCODE` and `CRON_SECRET`. See [`DECISIONS.md`](./DECISIONS.md) for every material scope or implementation decision and [`TESTLOG.md`](./TESTLOG.md) for observed gates and failures.
 
+The submission's deliberate cuts, demo boundaries, and production follow-up are collected in [`docs/HACKATHON-TRADEOFFS.md`](./docs/HACKATHON-TRADEOFFS.md).
+
 ## Test matrix
 
 | Layer | Evidence |

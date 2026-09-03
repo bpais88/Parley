@@ -137,3 +137,8 @@
 - Owner proof: GREEN — the deployed passcode view showed one direct booking, €1,530 revenue, €1,394.10 hotel net, and +€74.10 versus OTA.
 - Cleanup: GREEN — removed the exact QA pilot row, ran the authorized demo reset, verified both test signup and booking counts returned to zero, and confirmed `/api/v1/health` reports connected Neon with ready inventory.
 - Regression: GREEN — typecheck, lint, 31 Vitest tests, three Playwright Chromium flows, production build, and migration integrity check, 2026-09-03 06:33 BST.
+
+## Hackathon trade-off documentation
+
+- Documentation: GREEN — `docs/HACKATHON-TRADEOFFS.md` distinguishes live behavior, demo-only behavior, deadline cuts, intentional safety boundaries, known debt, and the recommended production sequence. README links to the document.
+- Regression: GREEN — typecheck, lint, and 31 Vitest tests, 2026-09-03 06:39 BST.
