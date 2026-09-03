@@ -254,7 +254,7 @@ async function runTool(name: string, args: JsonObject, actor: Actor): Promise<To
         if (result.ok) {
           state.stay = stay;
           state.hold = result;
-          addTimeline(actor, `Held ${stay.rooms} Standard rooms for 15 minutes.`);
+          addTimeline(actor, `Held ${stay.rooms} Standard room${stay.rooms === 1 ? "" : "s"} for 15 minutes.`);
         }
         break;
       }
@@ -410,7 +410,7 @@ function bookingHtml() {
   if (!booking) return "";
   return `<section class="confirmation"><div class="check">✓</div><div class="overline">Direct booking confirmed</div>
     <h2>${escapeHtml(booking.booking_ref)}</h2><strong>${money(booking.all_in_total_cents)} all-in</strong>
-    <p>${escapeHtml(booking.rooms)} Standard rooms · ${escapeHtml(booking.check_in)} → ${escapeHtml(booking.check_out)}</p>
+    <p>${escapeHtml(booking.rooms)} Standard room${Number(booking.rooms) === 1 ? "" : "s"} · ${escapeHtml(booking.check_in)} → ${escapeHtml(booking.check_out)}</p>
     <p>No payment was processed. The guest keeps this reference as the demo confirmation.</p></section>`;
 }
 
@@ -431,7 +431,7 @@ function render() {
             <div class="numbers"><label>Rooms<input id="rooms" type="number" min="1" max="12" value="${state.stay.rooms}"></label><label>Guests / room<input id="guests" type="number" min="1" max="4" value="${state.stay.guests_per_room}"></label></div>
             <button class="secondary" data-action="search">Check direct availability</button>
           </section>
-          ${room ? `<section class="room"><div><div class="overline">Standard</div><h2>${money(room.bar_flex_cents)} <small>/ room-night</small></h2><p>${escapeHtml(room.available)} rooms available · Flexible direct rate</p></div>${state.hold ? "" : `<button data-action="hold">Hold ${state.stay.rooms}</button>`}</section>` : ""}
+          ${room ? `<section class="room"><div><div class="overline">Standard</div><h2>${money(room.bar_flex_cents)} <small>/ room-night</small></h2><p>${escapeHtml(room.available)} room${Number(room.available) === 1 ? "" : "s"} available · Flexible direct rate</p></div>${state.hold ? "" : `<button data-action="hold">Hold ${state.stay.rooms}</button>`}</section>` : ""}
           ${state.hold ? `<div class="hold"><span>● ${state.stay.rooms} × Standard held</span><b data-countdown="${escapeHtml(holdExpiry)}">${remaining(holdExpiry)}</b></div>` : ""}
           ${state.hold && !state.sessionId ? `<button class="primary" data-action="offer">Request breakfast + late checkout</button>` : ""}
           ${currentOfferHtml()}

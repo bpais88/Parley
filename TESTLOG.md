@@ -177,6 +177,6 @@
 - Flexible-only live path: GREEN — five rooms for 24–27 September with `payment_preference: flexible` returned €105 per room-night, €157,500 room charges / €160,500 all-in, flexible cancellation, pay at hotel, breakfast, and late checkout.
 - Refundable rebook live path: GREEN — one room for 17–19 October with a refundable €120/night Booking.com booking returned `beat_ota`, €111/night / €226 all-in, breakfast, and the required “book here first, then cancel there” explanation.
 - Non-refundable guardrail live path: GREEN — the same booking with `refundable: false` returned `not_eligible`, reason `ota_nonrefundable`, and warned about double-charge risk.
-- UX fixes: GREEN — singular one-room availability/hold summaries are grammatical; offer timeline text reflects the actual requested perks and attributes ineligibility to the hotel policy.
+- UX fixes: GREEN — singular one-room availability, hold, timeline, inventory, and confirmation summaries are grammatical; offer timeline text reflects the actual requested perks and attributes ineligibility to the hotel policy.
 - Safety contract: GREEN — no tool schema contains card, PAN, CVC, or CVV fields. The visible checkout regression asserts that no card-number or security-code inputs exist.
-- Regression: GREEN — kit built at 8,717 bytes gzipped with nine tools; typecheck, lint, 31 Vitest tests, four Playwright Chromium flows, and the Next.js production build all passed.
+- Regression: GREEN — kit built at 8,735 bytes gzipped with nine tools; typecheck, lint, 31 Vitest tests, four Playwright Chromium flows, and the Next.js production build all passed.

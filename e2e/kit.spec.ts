@@ -271,6 +271,7 @@ test("rebook guardrails preserve the other booking and reject non-refundable sta
   const stay = { check_in: "2026-10-17", check_out: "2026-10-19", rooms: 1, guests_per_room: 1 };
   await call("set_dates", stay);
   const hold = await call("hold_rooms", stay);
+  await expect(page.getByText("Held 1 Standard room for 15 minutes.")).toBeVisible();
   const existingBooking = {
     channel: "Booking.com",
     rate_per_night_cents: 12_000,
