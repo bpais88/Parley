@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { TOOL_DEFINITIONS } from "./tool-definitions";
 
 const expectedNames = [
+  "get_negotiation_policy",
   "get_stay_context",
   "set_dates",
   "search_availability",
@@ -13,9 +14,9 @@ const expectedNames = [
 ];
 
 describe("WebMCP tool manifest", () => {
-  it("exposes exactly the reduced eight-tool surface", () => {
+  it("exposes exactly the focused nine-tool surface", () => {
     expect(TOOL_DEFINITIONS.map((tool) => tool.name)).toEqual(expectedNames);
-    expect(new Set(expectedNames).size).toBe(8);
+    expect(new Set(expectedNames).size).toBe(9);
     expect(expectedNames.every((name) => !/(accept|pay|card|cancel)/i.test(name))).toBe(true);
   });
 

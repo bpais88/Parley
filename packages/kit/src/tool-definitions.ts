@@ -28,6 +28,13 @@ const write = { readOnlyHint: false, destructiveHint: false } as const;
 
 export const TOOL_DEFINITIONS: ToolDefinition[] = [
   {
+    name: "get_negotiation_policy",
+    description:
+      "Reads the hotel's direct-deal rules, available perks, group threshold, round limit, and offer timing. Use it before proposing a negotiation strategy; it changes nothing and explains that acceptance and payment remain human-only.",
+    inputSchema: { type: "object", properties: {}, additionalProperties: false },
+    annotations: read,
+  },
+  {
     name: "get_stay_context",
     description:
       "Reads the stay, room, active hold, and current negotiated offer visible in the Parley panel. Use it before acting or when the human refers to this page; it changes nothing and explains that acceptance is human-only.",
@@ -119,7 +126,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   {
     name: "counter_offer",
     description:
-      "Submits one price counter to the open hotel negotiation. Use it when the guest wants a better total or per-night price; it advances the negotiation round and may require prepayment or adjust inclusions, but never accepts the offer.",
+      "Submits one price counter to the open hotel negotiation. Use prepaid_ok when the guest permits a conditional prepaid, non-refundable offer and wants the lowest price; use flexible when they cannot prepay. It advances the round but never accepts or pays.",
     inputSchema: {
       type: "object",
       properties: {
@@ -127,7 +134,12 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         target_total_cents: { type: "integer", minimum: 1 },
         target_per_night_cents: { type: "integer", minimum: 1 },
         keep_inclusions: { type: "boolean" },
-        payment_preference: { type: "string", enum: ["flexible", "prepaid_ok"] },
+        payment_preference: {
+          type: "string",
+          enum: ["flexible", "prepaid_ok"],
+          description:
+            "Use prepaid_ok only when the guest allows the hotel to return a prepaid, non-refundable offer for review; this does not accept or pay.",
+        },
         message: { type: "string", maxLength: 200 },
       },
       required: ["session_id", "keep_inclusions", "payment_preference"],

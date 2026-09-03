@@ -48,6 +48,19 @@ async function mockPlatform(page: Page) {
         human_summary: "Casa do Zêzere offers negotiable direct rates.",
         next_actions: ["search_availability"],
         property: { slug: "casa-do-zezere", name: "Casa do Zêzere", currency: "EUR" },
+        policy: {
+          negotiable: true,
+          beats_ota_up_to_pct: 12,
+          group_threshold_rooms: 8,
+          max_rounds: 3,
+          offer_ttl_min: 10,
+          hold_ttl_min: 15,
+          perks: [
+            { code: "breakfast", label: "Breakfast", value_cents: 1_200 },
+            { code: "late_checkout", label: "Late checkout", value_cents: 1_500 },
+          ],
+          human_only: ["accept", "payment", "cancellation_elsewhere"],
+        },
       };
     } else if (path === "/api/v1/owner/ledger") {
       body = {
@@ -98,7 +111,7 @@ async function mockPlatform(page: Page) {
         human_summary: offerOne.explanation,
         next_actions: ["counter_offer"],
         session_id: "22222222-2222-4222-8222-222222222222",
-        result: offerOne,
+        offer: offerOne,
       };
     } else if (path.endsWith("/counter")) {
       body = {
@@ -161,6 +174,7 @@ test.beforeEach(async ({ page }) => {
 test("debug shim drives the complete negotiation contract", async ({ page }) => {
   const names = await page.evaluate(() => window.__parleyTools?.list().map((tool) => tool.name));
   expect(names).toEqual([
+    "get_negotiation_policy",
     "get_stay_context",
     "set_dates",
     "search_availability",
@@ -176,6 +190,11 @@ test("debug shim drives the complete negotiation contract", async ({ page }) => 
       ({ tool, input }) => window.__parleyTools?.call(tool, input),
       { tool: name, input: args },
     );
+  const policy = await call("get_negotiation_policy", {});
+  expect((policy?.policy as Record<string, unknown>).negotiable).toBe(true);
+  await page.getByLabel("Rooms").fill("1");
+  const visibleContext = await call("get_stay_context", {});
+  expect((visibleContext?.stay as Record<string, unknown>).rooms).toBe(1);
   const stay = { check_in: "2026-09-24", check_out: "2026-09-27", rooms: 5, guests_per_room: 1 };
   await call("set_dates", stay);
   await call("search_availability", stay);
@@ -185,7 +204,7 @@ test("debug shim drives the complete negotiation contract", async ({ page }) => 
     asks: ["breakfast", "late_checkout"],
     payment_preference: "flexible",
   });
-  expect((first?.result as Record<string, unknown>).total_cents).toBe(165_000);
+  expect((first?.offer as Record<string, unknown>).total_cents).toBe(165_000);
   const second = await call("counter_offer", {
     session_id: first?.session_id,
     target_total_cents: 140_000,

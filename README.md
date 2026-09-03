@@ -38,10 +38,11 @@ The shared page turns that into reviewable numeric floors, discount limits, perk
 
 The agent and guest share the same page, state, and visual feedback. `set_dates` moves the date fields the guest sees; holding rooms starts the same countdown; offers appear in a timeline with separate **Your agent** and **Casa do Zêzere · policy** identities. A server-side MCP would not naturally inherit the page the guest chose or expose each action in that shared interface. Visiting the hotel URL is enough to discover its capabilities.
 
-Parley registers eight imperative page tools from top-level JavaScript:
+Parley registers nine imperative page tools from top-level JavaScript:
 
 | Tool | Effect |
 |---|---|
+| `get_negotiation_policy` | Reads negotiability, perks, round limits, and the human-only boundary |
 | `get_stay_context` | Reads the visible stay, hold, and offer |
 | `set_dates` | Updates the shared stay picker |
 | `search_availability` | Reads live inventory and rate totals |
@@ -72,7 +73,7 @@ The guest saves €120 on rooms and receives €255 of correctly unitized perk v
 
 ```mermaid
 flowchart LR
-  G[Guest + browser agent] -->|8 WebMCP page tools| K[Vanilla TS kit + Shadow DOM panel]
+  G[Guest + browser agent] -->|9 WebMCP page tools| K[Vanilla TS kit + Shadow DOM panel]
   K -->|strict JSON| A[Next.js API on Vercel]
   A --> E[Pure deterministic engine]
   A --> N[(Neon Postgres)]
@@ -121,7 +122,7 @@ The submission's deliberate cuts, demo boundaries, and production follow-up are 
 | Layer | Evidence |
 |---|---|
 | Engine and schemas | 31 Vitest tests overall; exact worked example, floors, bands, perks, monotonicity, round cap, rebook guards |
-| Tool contract | Eight hotel tools plus ten landing-page onboarding tools; unique names, strict schemas, annotations, description quality, forbidden-action checks |
+| Tool contract | Nine hotel tools plus ten landing-page onboarding tools; unique names, strict schemas, annotations, description quality, forbidden-action checks |
 | Browser E2E | Agent-shim sequence, clicks-only checkout, owner +€74.10 ledger assertion |
 | Hosted integration | Real availability → hold → offer → counter → token → confirm → booking → owner ledger against Neon |
 | WebMCP runtime | Deployed page tools discovered and directly invoked in the in-app browser; final Sol/Terra prompt screenshots remain in `TESTLOG.md` until observed |

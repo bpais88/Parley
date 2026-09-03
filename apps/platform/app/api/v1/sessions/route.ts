@@ -113,9 +113,11 @@ export async function POST(request: Request) {
     }
 
     return success(
-      result.kind === "offer" ? result.explanation : result.explanation,
+      result.explanation,
       result.kind === "offer" ? ["get_offer_status", "counter_offer"] : ["get_offer_status"],
-      { session_id: session.id, result },
+      result.kind === "offer"
+        ? { session_id: session.id, offer: result }
+        : { session_id: session.id, result },
       201,
     );
   } catch (error) {

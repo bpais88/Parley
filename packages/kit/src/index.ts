@@ -134,11 +134,62 @@ function offerFromResult(result: JsonObject): JsonObject | null {
   return negotiation?.kind === "offer" ? negotiation : null;
 }
 
+function syncStayFromVisibleInputs() {
+  const checkIn = shadow.querySelector<HTMLInputElement>("#check-in")?.value;
+  const checkOut = shadow.querySelector<HTMLInputElement>("#check-out")?.value;
+  const rooms = Number(shadow.querySelector<HTMLInputElement>("#rooms")?.value);
+  const guestsPerRoom = Number(shadow.querySelector<HTMLInputElement>("#guests")?.value);
+  const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+
+  if (checkIn && datePattern.test(checkIn)) state.stay.check_in = checkIn;
+  if (checkOut && datePattern.test(checkOut)) state.stay.check_out = checkOut;
+  if (Number.isInteger(rooms) && rooms >= 1 && rooms <= 12) state.stay.rooms = rooms;
+  if (Number.isInteger(guestsPerRoom) && guestsPerRoom >= 1 && guestsPerRoom <= 4) {
+    state.stay.guests_per_room = guestsPerRoom;
+  }
+
+  return { ...state.stay };
+}
+
+function updateStayFromInput(input: HTMLInputElement) {
+  if (input.id === "check-in" && /^\d{4}-\d{2}-\d{2}$/.test(input.value)) {
+    state.stay.check_in = input.value;
+  }
+  if (input.id === "check-out" && /^\d{4}-\d{2}-\d{2}$/.test(input.value)) {
+    state.stay.check_out = input.value;
+  }
+  if (input.id === "rooms" && input.validity.valid && Number.isInteger(input.valueAsNumber)) {
+    state.stay.rooms = input.valueAsNumber;
+  }
+  if (input.id === "guests" && input.validity.valid && Number.isInteger(input.valueAsNumber)) {
+    state.stay.guests_per_room = input.valueAsNumber;
+  }
+}
+
 async function runTool(name: string, args: JsonObject, actor: Actor): Promise<ToolResult> {
   const started = performance.now();
   let result: ToolResult;
   try {
     switch (name) {
+      case "get_negotiation_policy": {
+        const policy = asObject(state.bootstrap?.policy);
+        result = policy
+          ? {
+              ok: true,
+              human_summary:
+                "Casa do Zêzere negotiates direct rates using fixed hotel rules and keeps acceptance human-only.",
+              next_actions: ["get_stay_context", "search_availability"],
+              policy,
+              human_only:
+                "The guest must use Accept & pay in the visible panel; there is no WebMCP tool for acceptance, payment, card details, or cancelling another booking.",
+            }
+          : {
+              ok: false,
+              error_code: "page_not_ready",
+              human_summary: "The hotel's negotiation policy is still loading. Please try again.",
+            };
+        break;
+      }
       case "get_stay_context":
         result = {
           ok: true,
@@ -147,7 +198,7 @@ async function runTool(name: string, args: JsonObject, actor: Actor): Promise<To
             : "The shared panel is ready for a stay search.",
           next_actions: state.sessionId ? ["get_offer_status"] : ["set_dates", "search_availability"],
           property: state.bootstrap?.property ?? { slug: propertySlug },
-          stay: state.stay,
+          stay: syncStayFromVisibleInputs(),
           active_hold: state.hold,
           active_session_id: state.sessionId,
           current_offer: state.offer,
@@ -211,6 +262,9 @@ async function runTool(name: string, args: JsonObject, actor: Actor): Promise<To
           state.sessionId = typeof result.session_id === "string" ? result.session_id : null;
           const offer = offerFromResult(result);
           if (offer) {
+            const response = { ...result };
+            delete response.result;
+            result = { ...response, offer } as ToolResult;
             state.offer = offer;
             addTimeline(actor, "Requested breakfast and late checkout from the hotel policy.", "action");
             addTimeline("Casa do Zêzere · policy", String(offer.explanation ?? result.human_summary), "offer");
@@ -417,14 +471,14 @@ shadow.addEventListener("click", (event) => {
   }
 });
 
-shadow.addEventListener("change", (event) => {
+const handleStayInput = (event: Event) => {
   const input = event.target instanceof HTMLInputElement ? event.target : null;
   if (!input) return;
-  if (input.id === "check-in") state.stay.check_in = input.value;
-  if (input.id === "check-out") state.stay.check_out = input.value;
-  if (input.id === "rooms") state.stay.rooms = Number(input.value);
-  if (input.id === "guests") state.stay.guests_per_room = Number(input.value);
-});
+  updateStayFromInput(input);
+};
+
+shadow.addEventListener("input", handleStayInput);
+shadow.addEventListener("change", handleStayInput);
 
 shadow.addEventListener("submit", (event) => {
   if (!(event.target instanceof HTMLFormElement) || event.target.id !== "parley-checkout") return;

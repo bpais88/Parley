@@ -26,7 +26,7 @@ export async function GET(
     const policy = property.policy;
     return success(
       `${property.name} offers negotiable direct rates with human-only acceptance.`,
-      ["get_stay_context", "search_availability"],
+      ["get_negotiation_policy", "get_stay_context", "search_availability"],
       {
         property: {
           slug: property.slug,

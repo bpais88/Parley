@@ -102,3 +102,10 @@ The participant's canonical Vercel project is `parleywebmcp`. Its Root Directory
 - Negotiation rules and contact settings are saved with the human-approved pilot signup and updated on a repeat signup for the same email+website. External delivery to that inbox begins only after property activation and remains explicitly listed as not built in the hackathon demo.
 - The natural-language textarea is a shared conversation aid, not a hidden parser. In the ChatGPT browser, the agent calls the strict rule tool; without an agent, the example and resulting fields remain directly editable by the hotelier.
 - A live browser test found that the setup form included the hotel's city while the strict pilot API omitted it. City is now part of the shared signup schema and persisted in `pilot_signups`; migration `0004_wet_slyde.sql` backfills earlier rows as `Not provided` before enforcing the constraint.
+
+## 2026-09-03 — Native-agent feedback fixes
+
+- Restored `get_negotiation_policy` to the hotel page after a native WebMCP run showed that the reduced eight-tool surface could not satisfy the first scripted judge prompt. The hotel surface now contains nine tools; the three overlapping convenience tools `compare_rate_plans`, `highlight_room`, and `add_special_request` remain deferred.
+- The shared stay is synchronized on both `input` and `change`, and `get_stay_context` reads the visible Shadow DOM fields before returning. This makes the panel the authoritative shared state when an agent or human edits a field.
+- Successful offer creation now uses the top-level `offer` key consistently for both `request_offer` and `counter_offer`. Non-offer outcomes retain `result` so `needs_owner` and `not_eligible` remain explicit variants.
+- A reported €1,575 flexible counter was not a pricing defect: the native call supplied `payment_preference: flexible`, for which the whole-euro €105 floor is correct. The `counter_offer` description and field schema now state that `prepaid_ok` permits the hotel to return a conditional prepaid/non-refundable offer for review and does not accept or pay. That path continues to produce the worked-example €1,530 room total.

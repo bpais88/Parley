@@ -31,7 +31,7 @@ The build used five priorities, in order:
 
 The following behavior is live, not a video-only mock:
 
-- The hotel demo registers eight imperative WebMCP tools from top-level page JavaScript.
+- The hotel demo registers nine imperative WebMCP tools from top-level page JavaScript.
 - The hotel acquisition page registers a separate ten-tool onboarding surface.
 - The browser agent and human share dates, room count, offers, countdowns, and the visible timeline.
 - Availability, holds, sessions, offers, confirmations, pilot requests, and ledger entries use Neon Postgres.
@@ -49,7 +49,7 @@ The following behavior is live, not a video-only mock:
 
 | Area | What shipped | What was deferred | Why it was deferred | Production path |
 |---|---|---|---|---|
-| Guest WebMCP surface | Eight tools covering context, dates, availability, holds, offers, counters, status, and booking lookup | `get_negotiation_policy`, `compare_rate_plans`, `highlight_room`, and `add_special_request` from the original 12-tool proposal | The eight-tool set completes the core negotiation journey with fewer tool-selection and confirmation failure points | Add the four read/UI tools after prompt-level evaluation confirms they improve selection rather than confuse it |
+| Guest WebMCP surface | Nine tools covering policy, context, dates, availability, holds, offers, counters, status, and booking lookup | `compare_rate_plans`, `highlight_room`, and `add_special_request` from the original 12-tool proposal | The nine-tool set completes the core negotiation journey and preserves the policy-discovery prompt while limiting overlapping choices | Add the three deferred read/UI tools after prompt-level evaluation confirms they improve selection rather than confuse it |
 | Inventory breadth | One Standard room type, one property, EUR | Superior and Suite categories, multi-property, multi-currency, and localization | Extra catalog breadth did not prove a different WebMCP capability and multiplied seed, pricing, and UI cases | Introduce property-scoped catalog and currency configuration behind the existing shared schemas |
 | Hotel website hosting | Demo hotel and kit served from the same Vercel deployment | Separate Netlify hotel deployment and Cloudflare edge distribution for the kit | Cross-provider deploys, DNS, and cache invalidation created deadline risk without changing the product loop | Publish the static hotel separately, serve versioned kit assets at the edge, and retain origin allowlists |
 | Booking-engine integration | Seeded live inventory and a documented integration contract | Mews, apaleo, Cloudbeds, SiteMinder, Channex, or another real PMS/channel manager | Each vendor requires credentials, commercial setup, and vendor-specific reservation semantics | Replace seeded ARI with a property adapter; redeem accepted offers as a single-use rate code or tentative reservation in the existing booking engine |
@@ -105,7 +105,7 @@ The vertical flow works, but a production release should also address:
 3. Build one real PMS or booking-engine adapter and hand accepted offers to its hosted checkout.
 4. Complete verified, consented enquiry delivery with operational logging.
 5. Separate the kit onto a versioned edge origin and prove cross-origin installation on an independent hotel site.
-6. Restore the four deferred guest tools only after conversational tool-selection tests.
+6. Restore the three deferred guest tools only after conversational tool-selection tests.
 7. Add multi-room-type and multi-property support.
 8. Build negotiate-anywhere and broader Level 0 discovery after the embedded flow is operating reliably.
 
