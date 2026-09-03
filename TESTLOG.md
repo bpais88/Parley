@@ -104,7 +104,7 @@
 
 ## Hotel acquisition landing page
 
-- Status: GREEN locally; production deployment verification pending.
+- Status: GREEN locally and in production.
 - Product surface: GREEN — responsive root landing page, hotel economics, live demo and docs paths, copy-ready Level 0 manifest, provisioned-key install explanation, agent activity, and human pilot form, 2026-09-03 05:34 BST.
 - WebMCP contract: GREEN — eight landing-page onboarding tools discovered from top-level page JavaScript; `get_parley_overview`, `set_hotel_profile`, and `prepare_pilot_signup` were directly invoked in Chromium. The prepared form visibly retained an unchecked consent box and disabled submit button.
 - Accessibility: GREEN — axe 4.12.1 reported zero violations after contrast and keyboard-scroll corrections. The remaining gradient contrast checks are indeterminate, not failures.
@@ -112,3 +112,6 @@
 - Persistence: GREEN — migration `0002_brave_switch.sql` applied to hosted Neon. A consented API request inserted successfully, and its explicit `qa-landing@parley.invalid` row was immediately deleted.
 - Regression: GREEN — `pnpm build:kit` (7,824 bytes gzipped), `pnpm typecheck`, `pnpm lint`, `pnpm test` (31 tests), `pnpm e2e` (3 Chromium flows), and `pnpm build`, 2026-09-03 05:36 BST.
 - Existing demo polish: GREEN — offer explanations now humanize perk codes and the kit's previously flagged small labels/offer overline use higher-contrast colors; the full clicks-only, agent-shim, and owner-ledger E2E suite remained green.
+- Production deployment: GREEN — canonical `https://parleywebmcp.vercel.app` serves the landing page; `/api/v1/health` reports connected Neon and ready inventory, 2026-09-03 05:38 BST.
+- Production WebMCP: GREEN — exactly eight onboarding tools were discovered on `/`; `get_parley_overview` returned the live demo URL, two onboarding paths, and the explicit human-only boundary. Navigating to `/demo` replaced them with exactly the approved eight hotel tools, with no mixed tool surface.
+- Production browser QA: GREEN — zero page errors and zero axe violations. Full-page evidence retained at `dogfood-output/screenshots/landing-production-full.png`.
