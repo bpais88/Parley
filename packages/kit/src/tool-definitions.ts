@@ -80,7 +80,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   {
     name: "request_offer",
     description:
-      "Asks the hotel's deterministic policy engine for a direct offer against an active hold. Use it after hold_rooms; it opens a negotiation and can include requested perks, but cannot accept, book, pay, or cancel another booking.",
+      "Asks the hotel's deterministic policy engine for a direct offer against an active hold. Use it after hold_rooms, including when a guest supplies a refundable OTA booking to beat; it opens a negotiation and returns eligibility or an offer, but cannot accept, book, pay, receive card data, or cancel the other booking. Always tell rebooking guests to confirm direct first and cancel elsewhere only afterward.",
     inputSchema: {
       type: "object",
       properties: {
@@ -93,18 +93,25 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
             enum: ["breakfast", "late_checkout", "early_checkin", "upgrade", "parking", "other"],
           },
         },
-        payment_preference: { type: "string", enum: ["flexible", "prepaid_ok"] },
+        payment_preference: {
+          type: "string",
+          enum: ["flexible", "prepaid_ok"],
+          description:
+            "Use flexible when the guest cannot prepay or requires refundable terms; prepaid_ok only requests conditional prepaid/non-refundable terms for review and never accepts or pays.",
+        },
         notes: { type: "string", maxLength: 200 },
         existing_booking: {
           type: "object",
+          description:
+            "The guest's existing booking facts. Only refundable bookings with more than 24 hours before the cancellation deadline are eligible; Parley never cancels it.",
           properties: {
-            channel: { type: "string", minLength: 1, maxLength: 80 },
-            rate_per_night_cents: { type: "integer", minimum: 1 },
-            total_cents: { type: "integer", minimum: 1 },
+            channel: { type: "string", minLength: 1, maxLength: 80, description: "Booking channel, such as Booking.com." },
+            rate_per_night_cents: { type: "integer", minimum: 1, description: "Existing room rate per night in integer cents." },
+            total_cents: { type: "integer", minimum: 1, description: "Existing booking room total in integer cents." },
             check_in: date,
             check_out: date,
-            refundable: { type: "boolean" },
-            cancellation_deadline: { type: "string", format: "date-time" },
+            refundable: { type: "boolean", description: "Whether the existing booking can still be cancelled without charge." },
+            cancellation_deadline: { type: "string", format: "date-time", description: "UTC ISO date-time for free cancellation expiry." },
           },
           required: [
             "channel",

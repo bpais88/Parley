@@ -109,3 +109,10 @@ The participant's canonical Vercel project is `parleywebmcp`. Its Root Directory
 - The shared stay is synchronized on both `input` and `change`, and `get_stay_context` reads the visible Shadow DOM fields before returning. This makes the panel the authoritative shared state when an agent or human edits a field.
 - Successful offer creation now uses the top-level `offer` key consistently for both `request_offer` and `counter_offer`. Non-offer outcomes retain `result` so `needs_owner` and `not_eligible` remain explicit variants.
 - A reported €1,575 flexible counter was not a pricing defect: the native call supplied `payment_preference: flexible`, for which the whole-euro €105 floor is correct. The `counter_offer` description and field schema now direct best-deal requests to `prepaid_ok` for a conditional prepaid/non-refundable quote unless the guest requires flexibility, and state that this only returns terms for review—it does not consent, accept, or pay. That path continues to produce the worked-example €1,530 room total.
+
+## 2026-09-03 — Final retry hardening
+
+- The live flexible-only and rebook-direct paths were exercised before changes. A flexible counter correctly returned €105 per room-night; a refundable 17–19 October Booking.com example returned €111 per night with `beat_ota` and “book here first, then cancel there”; the non-refundable variant returned `ota_nonrefundable`.
+- Expanded `request_offer` guidance to explain rebook eligibility, integer-cent fields, the non-binding meaning of `prepaid_ok`, and the prohibition on receiving card data or cancelling the other booking. This is tool-selection guidance only; negotiation math is unchanged.
+- Corrected singular room summaries and replaced the kit's hardcoded breakfast-plus-late-checkout timeline text with the actual requested perks. Ineligible rebook outcomes are now attributed to the hotel policy rather than incorrectly appearing as an owner decision.
+- Added a browser regression covering eligible and non-refundable rebooking plus the required “book here first” language. The checkout regression now explicitly proves there are no card-number or security-code inputs.

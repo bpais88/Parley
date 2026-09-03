@@ -171,3 +171,12 @@
 - Runtime: GREEN — the console had no page errors. `getTools()` was observed to be asynchronous and required `await`; an inert session-scoped `__probe` tool registered by the external tester was not part of Parley's ten-tool manifest.
 - Scope boundary: NOT IMPLEMENTED — this validates hotel setup and inbox policy only. Outbound email delivery, `/negotiate`, and the hotel Match/Counter/Decline response page remain documented hackathon cuts and have not been tested or claimed.
 - Evidence: two screenshots were supplied in the project conversation; this entry records an external agent report rather than a locally scripted run.
+
+## Final retry hardening
+
+- Flexible-only live path: GREEN — five rooms for 24–27 September with `payment_preference: flexible` returned €105 per room-night, €157,500 room charges / €160,500 all-in, flexible cancellation, pay at hotel, breakfast, and late checkout.
+- Refundable rebook live path: GREEN — one room for 17–19 October with a refundable €120/night Booking.com booking returned `beat_ota`, €111/night / €226 all-in, breakfast, and the required “book here first, then cancel there” explanation.
+- Non-refundable guardrail live path: GREEN — the same booking with `refundable: false` returned `not_eligible`, reason `ota_nonrefundable`, and warned about double-charge risk.
+- UX fixes: GREEN — singular one-room availability/hold summaries are grammatical; offer timeline text reflects the actual requested perks and attributes ineligibility to the hotel policy.
+- Safety contract: GREEN — no tool schema contains card, PAN, CVC, or CVV fields. The visible checkout regression asserts that no card-number or security-code inputs exist.
+- Regression: GREEN — kit built at 8,717 bytes gzipped with nine tools; typecheck, lint, 31 Vitest tests, four Playwright Chromium flows, and the Next.js production build all passed.

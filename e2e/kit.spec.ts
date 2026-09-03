@@ -33,6 +33,19 @@ const offerTwo = {
   guest_value_score_cents: 37_500,
 };
 
+const rebookOffer = {
+  ...offerOne,
+  price_per_night_cents: 11_100,
+  total_cents: 22_200,
+  tax_cents: 400,
+  all_in_total_cents: 22_600,
+  inclusions: ["breakfast"],
+  reasons: ["beat_ota"],
+  explanation:
+    "We would rather share the commission: 8% under your Booking.com rate; book here first, then cancel there.",
+  guest_value_score_cents: 2_200,
+};
+
 async function mockPlatform(page: Page) {
   await page.route("**/api/v1/**", async (route) => {
     const url = new URL(route.request().url());
@@ -106,13 +119,29 @@ async function mockPlatform(page: Page) {
         expires_at: "2099-09-03T12:00:00.000Z",
       };
     } else if (path === "/api/v1/sessions" && route.request().method() === "POST") {
-      body = {
-        ok: true,
-        human_summary: offerOne.explanation,
-        next_actions: ["counter_offer"],
-        session_id: "22222222-2222-4222-8222-222222222222",
-        offer: offerOne,
-      };
+      const requestBody = route.request().postDataJSON() as Record<string, unknown>;
+      const existingBooking = requestBody.existing_booking as Record<string, unknown> | undefined;
+      if (existingBooking?.refundable === false) {
+        body = {
+          ok: true,
+          human_summary: "The existing booking is non-refundable, so replacing it would risk a double charge.",
+          next_actions: ["get_stay_context"],
+          result: {
+            kind: "not_eligible",
+            reason: "ota_nonrefundable",
+            explanation: "The existing booking is non-refundable, so replacing it would risk a double charge.",
+          },
+        };
+      } else {
+        const responseOffer = existingBooking ? rebookOffer : offerOne;
+        body = {
+          ok: true,
+          human_summary: responseOffer.explanation,
+          next_actions: ["counter_offer"],
+          session_id: "22222222-2222-4222-8222-222222222222",
+          offer: responseOffer,
+        };
+      }
     } else if (path.endsWith("/counter")) {
       body = {
         ok: true,
@@ -227,9 +256,49 @@ test("a human can complete checkout using buttons without card data", async ({ p
   await page.getByRole("button", { name: "Accept & pay €1,560.00" }).click();
   await expect(page.getByRole("heading", { name: "Confirm the demo booking" })).toBeVisible();
   await expect(page.getByText("no card details collected", { exact: false })).toBeVisible();
+  await expect(page.locator('input[autocomplete^="cc-"], input[name*="card" i], input[name="cvc"], input[name="cvv"]')).toHaveCount(0);
   await page.getByRole("button", { name: "Confirm booking" }).click();
   await expect(page.getByRole("heading", { name: "CZ-7F3K" })).toBeVisible();
   await expect(page.getByText("No payment was processed", { exact: false })).toBeVisible();
+});
+
+test("rebook guardrails preserve the other booking and reject non-refundable stays", async ({ page }) => {
+  const call = (name: string, args: Record<string, unknown>) =>
+    page.evaluate(
+      ({ tool, input }) => window.__parleyTools?.call(tool, input),
+      { tool: name, input: args },
+    );
+  const stay = { check_in: "2026-10-17", check_out: "2026-10-19", rooms: 1, guests_per_room: 1 };
+  await call("set_dates", stay);
+  const hold = await call("hold_rooms", stay);
+  const existingBooking = {
+    channel: "Booking.com",
+    rate_per_night_cents: 12_000,
+    total_cents: 24_000,
+    check_in: stay.check_in,
+    check_out: stay.check_out,
+    refundable: true,
+    cancellation_deadline: "2026-10-15T12:00:00.000Z",
+  };
+  const eligible = await call("request_offer", {
+    hold_id: hold?.hold_id,
+    asks: ["breakfast"],
+    payment_preference: "prepaid_ok",
+    existing_booking: existingBooking,
+  });
+  expect((eligible?.offer as Record<string, unknown>).reasons).toContain("beat_ota");
+  expect((eligible?.offer as Record<string, unknown>).explanation).toContain("book here first, then cancel there");
+  await expect(page.getByText("Asked the hotel to beat the existing booking with breakfast.")).toBeVisible();
+
+  const blocked = await call("request_offer", {
+    hold_id: hold?.hold_id,
+    asks: ["breakfast"],
+    payment_preference: "prepaid_ok",
+    existing_booking: { ...existingBooking, refundable: false },
+  });
+  expect((blocked?.result as Record<string, unknown>).reason).toBe("ota_nonrefundable");
+  expect(blocked?.human_summary).toContain("risk a double charge");
+  await expect(page.getByText("Casa do Zêzere · policy").last()).toBeVisible();
 });
 
 test("the owner sees the direct-versus-OTA ledger proof", async ({ page }) => {

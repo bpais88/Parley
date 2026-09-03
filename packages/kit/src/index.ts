@@ -134,6 +134,15 @@ function offerFromResult(result: JsonObject): JsonObject | null {
   return negotiation?.kind === "offer" ? negotiation : null;
 }
 
+function readableAsks(value: unknown) {
+  if (!Array.isArray(value)) return "";
+  const labels = value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.replaceAll("_", " "));
+  if (labels.length < 2) return labels[0] ?? "";
+  return `${labels.slice(0, -1).join(", ")} and ${labels.at(-1)}`;
+}
+
 function syncStayFromVisibleInputs() {
   const checkIn = shadow.querySelector<HTMLInputElement>("#check-in")?.value;
   const checkOut = shadow.querySelector<HTMLInputElement>("#check-out")?.value;
@@ -266,10 +275,19 @@ async function runTool(name: string, args: JsonObject, actor: Actor): Promise<To
             delete response.result;
             result = { ...response, offer } as ToolResult;
             state.offer = offer;
-            addTimeline(actor, "Requested breakfast and late checkout from the hotel policy.", "action");
+            const asks = readableAsks(args.asks);
+            const action = args.existing_booking
+              ? `Asked the hotel to beat the existing booking${asks ? ` with ${asks}` : ""}.`
+              : `Requested a direct offer${asks ? ` with ${asks}` : ""}.`;
+            addTimeline(actor, action, "action");
             addTimeline("Casa do Zêzere · policy", String(offer.explanation ?? result.human_summary), "offer");
           } else {
-            addTimeline("Casa do Zêzere · owner", result.human_summary, "system");
+            const outcome = asObject(result.result);
+            addTimeline(
+              outcome?.kind === "not_eligible" ? "Casa do Zêzere · policy" : "Casa do Zêzere · owner",
+              result.human_summary,
+              "system",
+            );
           }
         }
         break;

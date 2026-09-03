@@ -40,8 +40,8 @@ export async function GET(request: Request) {
 
     return success(
       availability.minimumAvailable >= stay.rooms
-        ? `${stay.rooms} Standard rooms are available for those dates.`
-        : `Only ${Math.max(0, availability.minimumAvailable)} Standard rooms remain for those dates.`,
+        ? `${stay.rooms} Standard room${stay.rooms === 1 ? " is" : "s are"} available for those dates.`
+        : `Only ${Math.max(0, availability.minimumAvailable)} Standard room${availability.minimumAvailable === 1 ? " remains" : "s remain"} for those dates.`,
       availability.minimumAvailable >= stay.rooms ? ["hold_rooms"] : ["set_dates"],
       {
         stay,

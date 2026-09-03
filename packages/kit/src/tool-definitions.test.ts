@@ -31,6 +31,10 @@ describe("WebMCP tool manifest", () => {
         expect(tool.annotations.destructiveHint, tool.name).toBe(false);
         expect(tool.description, tool.name).toMatch(/updates|places|asks|submits/i);
       }
+      expect(JSON.stringify(tool.inputSchema), tool.name).not.toMatch(/card|pan|cvc|cvv/i);
     }
+    expect(TOOL_DEFINITIONS.find((tool) => tool.name === "request_offer")?.description).toMatch(
+      /refundable OTA booking|confirm direct first|card data/i,
+    );
   });
 });

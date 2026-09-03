@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     }
 
     return success(
-      `${stay.rooms} Standard rooms are held for ${property.policy.hold_ttl_min} minutes.`,
+      `${stay.rooms} Standard room${stay.rooms === 1 ? " is" : "s are"} held for ${property.policy.hold_ttl_min} minutes.`,
       ["request_offer"],
       {
         hold_id: created.hold_id,

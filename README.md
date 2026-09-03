@@ -82,7 +82,7 @@ flowchart LR
   H[Human-only checkout button] -->|single-use hashed token| A
 ```
 
-Next.js on Vercel keeps the hotel demo, owner UI, API, cron and docs in one reliable deploy; Neon provides serverless Postgres with migrations in the repository. The vanilla TypeScript kit is a 24.5 KB IIFE (8.3 KB gzipped), so it is appropriate for a third-party hotel page. The negotiation engine has no LLM, I/O, clock, or randomness. This reduced hackathon build intentionally serves both the site and kit from Vercel; Cloudflare distribution, Netlify cross-host deployment, email fallback, and OpenAI policy parsing were cut before implementation rather than claimed without proof.
+Next.js on Vercel keeps the hotel demo, owner UI, API, cron and docs in one reliable deploy; Neon provides serverless Postgres with migrations in the repository. The vanilla TypeScript kit is a 25.8 KB IIFE (8.7 KB gzipped), so it is appropriate for a third-party hotel page. The negotiation engine has no LLM, I/O, clock, or randomness. This reduced hackathon build intentionally serves both the site and kit from Vercel; Cloudflare distribution, Netlify cross-host deployment, email fallback, and OpenAI policy parsing were cut before implementation rather than claimed without proof.
 
 ## Safety model
 
@@ -123,7 +123,7 @@ The submission's deliberate cuts, demo boundaries, and production follow-up are 
 |---|---|
 | Engine and schemas | 31 Vitest tests overall; exact worked example, floors, bands, perks, monotonicity, round cap, rebook guards |
 | Tool contract | Nine hotel tools plus ten landing-page onboarding tools; unique names, strict schemas, annotations, description quality, forbidden-action checks |
-| Browser E2E | Agent-shim sequence, clicks-only checkout, owner +€74.10 ledger assertion |
+| Browser E2E | Agent-shim sequence, clicks-only checkout, rebook eligibility guardrails, owner +€74.10 ledger assertion |
 | Hosted integration | Real availability → hold → offer → counter → token → confirm → booking → owner ledger against Neon |
 | WebMCP runtime | Deployed page tools discovered and directly invoked in the in-app browser; final Sol/Terra prompt screenshots remain in `TESTLOG.md` until observed |
 
