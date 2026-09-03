@@ -142,3 +142,14 @@
 
 - Documentation: GREEN — `docs/HACKATHON-TRADEOFFS.md` distinguishes live behavior, demo-only behavior, deadline cuts, intentional safety boundaries, known debt, and the recommended production sequence. README links to the document.
 - Regression: GREEN — typecheck, lint, and 31 Vitest tests, 2026-09-03 06:39 BST.
+
+## Native-agent feedback regression
+
+- Tool registration: GREEN — the redeployed `/demo` exposed exactly nine native page tools, including the restored `get_negotiation_policy`; the public debug shim remained absent, 2026-09-03 07:06 BST.
+- Policy discovery: GREEN — direct native invocation returned negotiability, five available perks, the eight-room owner threshold, three rounds, hold/offer timing, and the explicit human-only acceptance boundary.
+- Shared visible state: GREEN — after changing the visible Shadow DOM Rooms field from five to one and dispatching `input`, `get_stay_context` returned `rooms: 1`. The stale/hardcoded state reported by Instinct was not reproduced after the fix.
+- Offer contract: GREEN — `request_offer` returned the first €165,000 room offer under the top-level `offer` key; `counter_offer` uses the same wrapper.
+- Counter semantics: GREEN — a €140,000 target with `payment_preference: prepaid_ok` returned €102 per room-night, €153,000 room total / €156,000 all-in, NRF, `Prepay now`, breakfast and late checkout, and reasons `prepay_required` plus `floor_reached`. The earlier €157,500 flexible response was correct for the native call's explicit `payment_preference: flexible`.
+- Human boundary: GREEN — `get_offer_status` reported `checkout_opened: false` and no acceptance/payment tool exists. The run stopped before acceptance.
+- Regression: GREEN — `pnpm build:kit` (8,271 bytes gzipped, nine tools), typecheck, lint, 31 Vitest tests, three Playwright Chromium flows, and the Next.js production build.
+- Cleanup: GREEN — authorized demo reset completed after the native run; `/api/v1/health` reported connected Neon and ready inventory, 2026-09-03 07:06 BST.

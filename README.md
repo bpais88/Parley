@@ -82,7 +82,7 @@ flowchart LR
   H[Human-only checkout button] -->|single-use hashed token| A
 ```
 
-Next.js on Vercel keeps the hotel demo, owner UI, API, cron and docs in one reliable deploy; Neon provides serverless Postgres with migrations in the repository. The vanilla TypeScript kit is a 22.7 KB IIFE (7.8 KB gzipped), so it is appropriate for a third-party hotel page. The negotiation engine has no LLM, I/O, clock, or randomness. This reduced hackathon build intentionally serves both the site and kit from Vercel; Cloudflare distribution, Netlify cross-host deployment, email fallback, and OpenAI policy parsing were cut before implementation rather than claimed without proof.
+Next.js on Vercel keeps the hotel demo, owner UI, API, cron and docs in one reliable deploy; Neon provides serverless Postgres with migrations in the repository. The vanilla TypeScript kit is a 24.5 KB IIFE (8.3 KB gzipped), so it is appropriate for a third-party hotel page. The negotiation engine has no LLM, I/O, clock, or randomness. This reduced hackathon build intentionally serves both the site and kit from Vercel; Cloudflare distribution, Netlify cross-host deployment, email fallback, and OpenAI policy parsing were cut before implementation rather than claimed without proof.
 
 ## Safety model
 
