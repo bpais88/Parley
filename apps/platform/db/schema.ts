@@ -14,7 +14,14 @@ import {
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
-import type { Ledger, Offer, Policy, Request } from "@parley/shared";
+import type {
+  HotelContactSettings,
+  HotelNegotiationRules,
+  Ledger,
+  Offer,
+  Policy,
+  Request,
+} from "@parley/shared";
 
 export const holdStatus = pgEnum("hold_status", [
   "active",
@@ -240,6 +247,12 @@ export const pilotSignups = pgTable(
     website: text("website").notNull(),
     rooms: integer("rooms").notNull(),
     otaCommissionPct: integer("ota_commission_pct").notNull(),
+    negotiationRules: jsonb("negotiation_rules")
+      .$type<HotelNegotiationRules>()
+      .notNull(),
+    contactSettings: jsonb("contact_settings")
+      .$type<HotelContactSettings>()
+      .notNull(),
     status: text("status").notNull().default("new"),
     createdAt,
   },

@@ -27,6 +27,26 @@ const hotelProfileProperties = {
   contact_email: { type: "string", format: "email", maxLength: 254 },
 };
 
+const negotiationRuleProperties = {
+  min_hotel_uplift_pct: { type: "integer", minimum: 0, maximum: 20 },
+  quiet_dates_max_discount_pct: { type: "integer", minimum: 0, maximum: 25 },
+  preferred_perks: {
+    type: "array",
+    maxItems: 5,
+    items: {
+      type: "string",
+      enum: ["breakfast", "late_checkout", "early_checkin", "upgrade", "parking"],
+    },
+  },
+  owner_review_above_rooms: { type: "integer", minimum: 1, maximum: 50 },
+  prepay_required_over_discount_pct: {
+    type: "integer",
+    minimum: 0,
+    maximum: 25,
+  },
+  voice: { type: "string", minLength: 2, maxLength: 160 },
+};
+
 export const LANDING_TOOL_DEFINITIONS: LandingToolDefinition[] = [
   {
     name: "get_parley_overview",
@@ -66,6 +86,40 @@ export const LANDING_TOOL_DEFINITIONS: LandingToolDefinition[] = [
       type: "object",
       properties: hotelProfileProperties,
       required: ["hotel_name", "website", "city", "rooms", "ota_commission_pct"],
+      additionalProperties: false,
+    },
+    annotations: write,
+  },
+  {
+    name: "configure_negotiation_rules",
+    description:
+      "Turns the hotelier's plain-language deal preferences into the rule fields visible on this page. Use it after discussing their floors, discounts, perks, group limits, prepayment, and tone; it changes only the setup preview and does not activate the rules.",
+    inputSchema: {
+      type: "object",
+      properties: negotiationRuleProperties,
+      required: [
+        "min_hotel_uplift_pct",
+        "quiet_dates_max_discount_pct",
+        "preferred_perks",
+        "owner_review_above_rooms",
+        "prepay_required_over_discount_pct",
+        "voice",
+      ],
+      additionalProperties: false,
+    },
+    annotations: write,
+  },
+  {
+    name: "set_guest_enquiry_inbox",
+    description:
+      "Sets the visible hotel inbox for guest follow-up requests and fixes the privacy rule to ask each guest before any contact details are shared. Use it when the hotelier names their reservations inbox; it changes only this setup and does not contact a guest or send email.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        enquiry_inbox: { type: "string", format: "email", maxLength: 254 },
+        guest_contact_policy: { type: "string", const: "ask_each_time" },
+      },
+      required: ["enquiry_inbox", "guest_contact_policy"],
       additionalProperties: false,
     },
     annotations: write,

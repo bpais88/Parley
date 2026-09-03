@@ -35,18 +35,26 @@ export async function POST(request: Request) {
         website: normalizedWebsite,
         rooms: input.rooms,
         otaCommissionPct: input.ota_commission_pct,
+        negotiationRules: input.negotiation_rules,
+        contactSettings: input.contact_settings,
       })
-      .onConflictDoNothing()
+      .onConflictDoUpdate({
+        target: [pilotSignups.contactEmail, pilotSignups.website],
+        set: {
+          hotelName: input.hotel_name,
+          rooms: input.rooms,
+          otaCommissionPct: input.ota_commission_pct,
+          negotiationRules: input.negotiation_rules,
+          contactSettings: input.contact_settings,
+        },
+      })
       .returning({ id: pilotSignups.id });
 
-    const alreadyRegistered = inserted.length === 0;
     return success(
-      alreadyRegistered
-        ? "This hotel is already on the Parley pilot list."
-        : "Your hotel is on the Parley pilot list.",
+      "Your hotel setup is saved for the Parley pilot.",
       [],
-      { already_registered: alreadyRegistered },
-      alreadyRegistered ? 200 : 201,
+      { signup_id: inserted[0]?.id },
+      201,
     );
   } catch (error) {
     return routeError(error);

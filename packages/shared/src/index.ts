@@ -173,6 +173,30 @@ export const ToolCallInputSchema = z
   })
   .strict();
 
+export const HotelNegotiationRulesSchema = z
+  .object({
+    min_hotel_uplift_pct: z.number().int().min(0).max(20),
+    quiet_dates_max_discount_pct: z.number().int().min(0).max(25),
+    preferred_perks: z.array(PerkCodeSchema).max(5),
+    owner_review_above_rooms: z.number().int().min(1).max(50),
+    prepay_required_over_discount_pct: z.number().int().min(0).max(25),
+    voice: z.string().trim().min(2).max(160),
+  })
+  .strict();
+
+export const HotelContactSettingsSchema = z
+  .object({
+    enquiry_inbox: z.email().max(254).optional(),
+    guest_contact_policy: z.enum(["ask_each_time", "do_not_collect"]),
+  })
+  .strict()
+  .refine(
+    (settings) =>
+      settings.guest_contact_policy === "do_not_collect" ||
+      Boolean(settings.enquiry_inbox),
+    { message: "An enquiry inbox is required when guest contact is enabled." },
+  );
+
 export const PilotSignupInputSchema = z
   .object({
     hotel_name: z.string().trim().min(2).max(120),
@@ -180,6 +204,8 @@ export const PilotSignupInputSchema = z
     website: z.url().max(500),
     rooms: z.number().int().min(1).max(2000),
     ota_commission_pct: z.number().int().min(0).max(40),
+    negotiation_rules: HotelNegotiationRulesSchema,
+    contact_settings: HotelContactSettingsSchema,
     consent_to_contact: z.literal(true),
   })
   .strict();
@@ -286,6 +312,8 @@ export type RequestOfferInput = z.infer<typeof RequestOfferInputSchema>;
 export type CheckoutTokenInput = z.infer<typeof CheckoutTokenInputSchema>;
 export type AcceptOfferInput = z.infer<typeof AcceptOfferInputSchema>;
 export type ToolCallInput = z.infer<typeof ToolCallInputSchema>;
+export type HotelNegotiationRules = z.infer<typeof HotelNegotiationRulesSchema>;
+export type HotelContactSettings = z.infer<typeof HotelContactSettingsSchema>;
 export type PilotSignupInput = z.infer<typeof PilotSignupInputSchema>;
 export type Offer = z.infer<typeof OfferSchema>;
 export type NeedsOwner = z.infer<typeof NeedsOwnerSchema>;

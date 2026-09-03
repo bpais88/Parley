@@ -1,6 +1,10 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import type {
+  HotelContactSettings,
+  HotelNegotiationRules,
+} from "@parley/shared";
 import {
   LANDING_TOOL_DEFINITIONS,
   type LandingToolDefinition,
@@ -37,6 +41,22 @@ const DEFAULT_PROFILE: HotelProfile = {
   contact_email: "",
 };
 
+const DEFAULT_RULES: HotelNegotiationRules = {
+  min_hotel_uplift_pct: 5,
+  quiet_dates_max_discount_pct: 12,
+  preferred_perks: ["breakfast", "late_checkout"],
+  owner_review_above_rooms: 8,
+  prepay_required_over_discount_pct: 5,
+  voice: "Warm, brief and welcoming",
+};
+
+const DEFAULT_CONTACT_SETTINGS: HotelContactSettings = {
+  guest_contact_policy: "do_not_collect",
+};
+
+const DEFAULT_POLICY_BRIEF =
+  "On quiet dates, offer breakfast and late checkout before lowering the price. Never leave me worse off than an OTA booking. Ask me before agreeing to groups above 8 rooms, and require prepayment for the deepest discounts.";
+
 let registration: Promise<void> | undefined;
 let activeRunner:
   | ((name: string, args: JsonObject) => Promise<ToolResult>)
@@ -71,12 +91,42 @@ const requiredNumber = (args: JsonObject, key: string) => {
   return value;
 };
 
+const requiredStringArray = (args: JsonObject, key: string): string[] => {
+  const value = args[key];
+  if (!Array.isArray(value) || !value.every((item) => typeof item === "string")) {
+    throw new Error(`${key} must be a list of choices.`);
+  }
+  return value as string[];
+};
+
+const requiredPerks = (
+  args: JsonObject,
+): HotelNegotiationRules["preferred_perks"] => {
+  const values = requiredStringArray(args, "preferred_perks");
+  const allowed = new Set([
+    "breakfast",
+    "late_checkout",
+    "early_checkin",
+    "upgrade",
+    "parking",
+  ]);
+  if (!values.every((value) => allowed.has(value))) {
+    throw new Error("preferred_perks contains an unsupported perk.");
+  }
+  return values as HotelNegotiationRules["preferred_perks"];
+};
+
 const euro = (value: number) =>
   new Intl.NumberFormat("en-IE", {
     style: "currency",
     currency: "EUR",
     maximumFractionDigits: 0,
   }).format(value);
+
+const friendlyPerk = (perk: string) => perk.replaceAll("_", " ");
+
+const ruleSummary = (rules: HotelNegotiationRules) =>
+  `Keep at least ${rules.min_hotel_uplift_pct}% more than an OTA booking; discount up to ${rules.quiet_dates_max_discount_pct}% on quiet dates; offer ${rules.preferred_perks.map(friendlyPerk).join(" and ") || "no automatic perks"}; ask the owner above ${rules.owner_review_above_rooms} rooms; require prepayment for discounts over ${rules.prepay_required_over_discount_pct}%.`;
 
 function registerLandingTools(modelContext: LandingModelContext) {
   if (!registration) {
@@ -104,6 +154,11 @@ function registerLandingTools(modelContext: LandingModelContext) {
 export default function HotelOnboarding() {
   const [profile, setProfile] = useState(DEFAULT_PROFILE);
   const profileRef = useRef(profile);
+  const [rules, setRules] = useState(DEFAULT_RULES);
+  const rulesRef = useRef(rules);
+  const [contactSettings, setContactSettings] = useState(DEFAULT_CONTACT_SETTINGS);
+  const contactSettingsRef = useRef(contactSettings);
+  const [policyBrief, setPolicyBrief] = useState(DEFAULT_POLICY_BRIEF);
   const [preview, setPreview] = useState<Preview>("level0");
   const previewRef = useRef(preview);
   const [registrationStatus, setRegistrationStatus] =
@@ -119,6 +174,12 @@ export default function HotelOnboarding() {
     profileRef.current = profile;
   }, [profile]);
   useEffect(() => {
+    rulesRef.current = rules;
+  }, [rules]);
+  useEffect(() => {
+    contactSettingsRef.current = contactSettings;
+  }, [contactSettings]);
+  useEffect(() => {
     previewRef.current = preview;
   }, [preview]);
   useEffect(() => {
@@ -127,7 +188,12 @@ export default function HotelOnboarding() {
 
   const level0Manifest = useMemo(() => {
     const channels: Record<string, string | boolean> = { webmcp: true };
-    if (profile.contact_email) channels.email = profile.contact_email;
+    if (
+      contactSettings.guest_contact_policy === "ask_each_time" &&
+      contactSettings.enquiry_inbox
+    ) {
+      channels.consent_based_enquiries = contactSettings.enquiry_inbox;
+    }
     return JSON.stringify(
       {
         version: "0.1",
@@ -138,20 +204,19 @@ export default function HotelOnboarding() {
           city: profile.city,
         },
         direct_deal: {
-          beats_ota_rate_up_to_pct: Math.max(
-            5,
-            Math.min(15, profile.ota_commission_pct - 6),
-          ),
-          perks: ["breakfast", "late_checkout", "upgrade_when_available"],
+          beats_ota_rate_up_to_pct: rules.quiet_dates_max_discount_pct,
+          perks: rules.preferred_perks,
+          owner_review_above_rooms: rules.owner_review_above_rooms,
         },
         channels,
+        guest_contact: contactSettings.guest_contact_policy,
         group_threshold_rooms: 4,
         human_only: ["accept", "payment", "cancellation_elsewhere"],
       },
       null,
       2,
     );
-  }, [profile]);
+  }, [contactSettings, profile, rules]);
 
   const installSnippet = `<script
   src="https://parleywebmcp.vercel.app/kit/v1/kit.js"
@@ -172,12 +237,14 @@ export default function HotelOnboarding() {
             next_actions: [
               "estimate_direct_booking_upside",
               "set_hotel_profile",
-              "show_level0_manifest",
+              "configure_negotiation_rules",
             ],
             live_demo_url: `${window.location.origin}/demo`,
             onboarding: {
               level0: "Publish one JSON file for immediate agent discovery.",
               webmcp: "Add one script after Parley provisions the property key.",
+              rules: "Describe your deal policy normally; your agent fills the rule card.",
+              enquiries: "Choose an inbox; guests are asked before details are shared.",
               pilot: "An authorized person submits the visible pilot form.",
             },
             human_only:
@@ -191,8 +258,15 @@ export default function HotelOnboarding() {
             next_actions:
               pilotStatusRef.current === "submitted"
                 ? []
-                : ["set_hotel_profile", "show_level0_manifest", "prepare_pilot_signup"],
+                : [
+                    "set_hotel_profile",
+                    "configure_negotiation_rules",
+                    "set_guest_enquiry_inbox",
+                    "prepare_pilot_signup",
+                  ],
             hotel_profile: profileRef.current,
+            negotiation_rules: rulesRef.current,
+            contact_settings: contactSettingsRef.current,
             visible_preview: previewRef.current,
             pilot_status: pilotStatusRef.current,
             human_only:
@@ -210,7 +284,7 @@ export default function HotelOnboarding() {
           result = {
             ok: true,
             human_summary: `Shifting ${shiftPct}% of that OTA revenue direct could recover an indicative ${euro(availablePool)} after a 3% Parley fee.`,
-            next_actions: ["set_hotel_profile", "show_level0_manifest"],
+            next_actions: ["set_hotel_profile", "configure_negotiation_rules"],
             assumptions: {
               annual_ota_revenue_eur: annualRevenue,
               ota_commission_pct: commissionPct,
@@ -240,9 +314,77 @@ export default function HotelOnboarding() {
           result = {
             ok: true,
             human_summary: `The visible setup now reflects ${nextProfile.hotel_name}.`,
-            next_actions: ["show_level0_manifest", "show_install_snippet", "prepare_pilot_signup"],
+            next_actions: [
+              "configure_negotiation_rules",
+              "set_guest_enquiry_inbox",
+              "show_level0_manifest",
+            ],
             hotel_profile: nextProfile,
             stored: false,
+          };
+          setMessage(result.human_summary);
+          break;
+        }
+        case "configure_negotiation_rules": {
+          const nextRules: HotelNegotiationRules = {
+            min_hotel_uplift_pct: requiredNumber(args, "min_hotel_uplift_pct"),
+            quiet_dates_max_discount_pct: requiredNumber(
+              args,
+              "quiet_dates_max_discount_pct",
+            ),
+            preferred_perks: requiredPerks(args),
+            owner_review_above_rooms: requiredNumber(
+              args,
+              "owner_review_above_rooms",
+            ),
+            prepay_required_over_discount_pct: requiredNumber(
+              args,
+              "prepay_required_over_discount_pct",
+            ),
+            voice: requiredString(args, "voice"),
+          };
+          setRules(nextRules);
+          rulesRef.current = nextRules;
+          setPolicyBrief(ruleSummary(nextRules));
+          document.getElementById("rule-results")?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+          result = {
+            ok: true,
+            human_summary: "The hotel's plain-language preferences are now shown as working negotiation rules.",
+            next_actions: ["set_guest_enquiry_inbox", "show_level0_manifest"],
+            negotiation_rules: nextRules,
+            plain_language_summary: ruleSummary(nextRules),
+            activated: false,
+          };
+          setMessage(result.human_summary);
+          break;
+        }
+        case "set_guest_enquiry_inbox": {
+          const inbox = requiredString(args, "enquiry_inbox");
+          const policy = requiredString(args, "guest_contact_policy");
+          if (policy !== "ask_each_time") {
+            throw new Error("Guest contact policy must ask for permission each time.");
+          }
+          const nextSettings: HotelContactSettings = {
+            enquiry_inbox: inbox,
+            guest_contact_policy: "ask_each_time",
+          };
+          setContactSettings(nextSettings);
+          contactSettingsRef.current = nextSettings;
+          document.getElementById("enquiry-inbox")?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+          result = {
+            ok: true,
+            human_summary: `Guest follow-up requests will be prepared for ${inbox}, with permission requested every time.`,
+            next_actions: ["show_level0_manifest", "prepare_pilot_signup"],
+            contact_settings: nextSettings,
+            activated: false,
+            privacy:
+              "This setup never shares guest details without their explicit permission and does not send an email now.",
           };
           setMessage(result.human_summary);
           break;
@@ -386,6 +528,8 @@ export default function HotelOnboarding() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           ...profile,
+          negotiation_rules: rules,
+          contact_settings: contactSettings,
           consent_to_contact: true,
         }),
       });
@@ -406,18 +550,18 @@ export default function HotelOnboarding() {
   };
 
   const statusCopy = {
-    checking: "Checking for WebMCP…",
-    ready: `${LANDING_TOOL_DEFINITIONS.length} onboarding tools ready`,
-    ordinary: "Open in ChatGPT to work with your agent",
-    failed: "WebMCP registration needs a refresh",
+    checking: "Connecting your setup assistant…",
+    ready: "Your setup assistant is ready",
+    ordinary: "Use the form, or open in ChatGPT for help",
+    failed: "Refresh the page to reconnect your setup assistant",
   }[registrationStatus];
 
   return (
     <section className={styles.studio} id="onboard" aria-labelledby="studio-title">
       <div className={styles.studioHeading}>
         <div>
-          <p className={styles.eyebrow}>Shared setup studio</p>
-          <h2 id="studio-title">Your agent can prepare it. You approve it.</h2>
+          <p className={styles.eyebrow}>Set up in a conversation</p>
+          <h2 id="studio-title">Tell your agent how you run the hotel.</h2>
         </div>
         <div className={styles.runtimeBadge} data-status={registrationStatus}>
           <span aria-hidden="true" />
@@ -427,7 +571,7 @@ export default function HotelOnboarding() {
 
       <div className={styles.studioGrid}>
         <div className={styles.builderCard}>
-          <div className={styles.stepLabel}><span>01</span> Hotel profile</div>
+          <div className={styles.stepLabel}><span>01</span> A little about your hotel</div>
           <div className={styles.formGrid}>
             <label>
               Hotel name
@@ -478,21 +622,190 @@ export default function HotelOnboarding() {
             </label>
           </div>
 
-          <div className={styles.stepLabel}><span>02</span> Copy the open starting point</div>
+          <div className={styles.stepLabel}><span>02</span> Describe a deal you would be happy with</div>
+          <div className={styles.briefCard}>
+            <label htmlFor="policy-brief">Say this to your agent, in your own words</label>
+            <textarea
+              id="policy-brief"
+              value={policyBrief}
+              onChange={(event) => setPolicyBrief(event.target.value)}
+              rows={5}
+            />
+            <div>
+              <span>Your agent turns this into the clear rules below.</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setPolicyBrief(DEFAULT_POLICY_BRIEF);
+                  setRules(DEFAULT_RULES);
+                  rulesRef.current = DEFAULT_RULES;
+                }}
+              >
+                Use this example
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.ruleResults} id="rule-results">
+            <div className={styles.resultHeader}>
+              <div>
+                <strong>Rules Parley will follow</strong>
+                <span>These are examples. You or your agent can change them.</span>
+              </div>
+              <span className={styles.readyPill}>Ready to review</span>
+            </div>
+            <div className={styles.ruleGrid}>
+              <label>
+                Protect my earnings
+                <span>Beat my OTA net by at least</span>
+                <span className={styles.ruleValue}>
+                  <input
+                    type="number"
+                    min={0}
+                    max={20}
+                    value={rules.min_hotel_uplift_pct}
+                    onChange={(event) =>
+                      setRules((current) => ({
+                        ...current,
+                        min_hotel_uplift_pct: Number(event.target.value),
+                      }))
+                    }
+                  />%
+                </span>
+              </label>
+              <label>
+                On quiet dates
+                <span>Discount by no more than</span>
+                <span className={styles.ruleValue}>
+                  <input
+                    type="number"
+                    min={0}
+                    max={25}
+                    value={rules.quiet_dates_max_discount_pct}
+                    onChange={(event) =>
+                      setRules((current) => ({
+                        ...current,
+                        quiet_dates_max_discount_pct: Number(event.target.value),
+                      }))
+                    }
+                  />%
+                </span>
+              </label>
+              <label>
+                Sweeten the deal first
+                <span>{rules.preferred_perks.map(friendlyPerk).join(" + ")}</span>
+                <strong>before cutting price</strong>
+              </label>
+              <label>
+                Bring bigger groups to me
+                <span>Ask for my approval above</span>
+                <span className={styles.ruleValue}>
+                  <input
+                    type="number"
+                    min={1}
+                    max={50}
+                    value={rules.owner_review_above_rooms}
+                    onChange={(event) =>
+                      setRules((current) => ({
+                        ...current,
+                        owner_review_above_rooms: Number(event.target.value),
+                      }))
+                    }
+                  /> rooms
+                </span>
+              </label>
+              <label>
+                Deepest discounts
+                <span>Require prepayment when discount is more than</span>
+                <span className={styles.ruleValue}>
+                  <input
+                    type="number"
+                    min={0}
+                    max={25}
+                    value={rules.prepay_required_over_discount_pct}
+                    onChange={(event) =>
+                      setRules((current) => ({
+                        ...current,
+                        prepay_required_over_discount_pct: Number(event.target.value),
+                      }))
+                    }
+                  />% off
+                </span>
+              </label>
+              <label>
+                Sound like us
+                <span>Offer style</span>
+                <input
+                  className={styles.voiceInput}
+                  value={rules.voice}
+                  onChange={(event) =>
+                    setRules((current) => ({ ...current, voice: event.target.value }))
+                  }
+                />
+              </label>
+            </div>
+            <p className={styles.ruleSummary}>{ruleSummary(rules)}</p>
+          </div>
+
+          <div className={styles.stepLabel}><span>03</span> Choose where guest enquiries arrive</div>
+          <div className={styles.inboxCard} id="enquiry-inbox">
+            <div className={styles.inboxIcon} aria-hidden="true">@</div>
+            <div className={styles.inboxFields}>
+              <label>
+                Reservations inbox
+                <input
+                  type="email"
+                  placeholder="reservations@yourhotel.com"
+                  required={contactSettings.guest_contact_policy === "ask_each_time"}
+                  value={contactSettings.enquiry_inbox ?? ""}
+                  onChange={(event) =>
+                    setContactSettings({
+                      enquiry_inbox: event.target.value || undefined,
+                      guest_contact_policy: event.target.value
+                        ? "ask_each_time"
+                        : "do_not_collect",
+                    })
+                  }
+                />
+              </label>
+              <label className={styles.inboxToggle}>
+                <input
+                  type="checkbox"
+                  checked={contactSettings.guest_contact_policy === "ask_each_time"}
+                  onChange={(event) =>
+                    setContactSettings((current) => ({
+                      ...current,
+                      guest_contact_policy: event.target.checked
+                        ? "ask_each_time"
+                        : "do_not_collect",
+                    }))
+                  }
+                />
+                Receive enquiries from guests who say yes
+              </label>
+              <p>
+                Before anything is shared, the guest&apos;s agent must ask: “Would you like
+                the hotel to contact you?” No clear yes, no contact details. This address is
+                saved with your pilot setup; messages begin only after activation.
+              </p>
+            </div>
+          </div>
+
+          <div className={styles.stepLabel}><span>04</span> Give this to your website partner</div>
           <div className={styles.previewTabs} id="integration-preview">
             <button
               type="button"
               aria-pressed={preview === "level0"}
               onClick={() => setPreview("level0")}
             >
-              Level 0 manifest
+              Simple starter file
             </button>
             <button
               type="button"
               aria-pressed={preview === "script"}
               onClick={() => setPreview("script")}
             >
-              One-script install
+              Live-offer script
             </button>
           </div>
           <div className={styles.codeCard}>
@@ -507,8 +820,8 @@ export default function HotelOnboarding() {
             </pre>
           </div>
           <p className={styles.helperCopy}>
-            The JSON works as an open discovery signal today. The script becomes active after
-            Parley provisions your property key—no PMS replacement required for the pilot.
+            Copy either option or send it to the person who manages your website. We provide
+            the property key during the pilot. You do not need to replace your booking engine.
           </p>
         </div>
 
@@ -516,21 +829,21 @@ export default function HotelOnboarding() {
           <div className={styles.agentCardHeader}>
             <div>
               <span className={styles.agentDot} aria-hidden="true" />
-              Agent-ready page
+              Your setup assistant
             </div>
             <small>{activity.length} calls</small>
           </div>
           <p>
-            Ask your agent to explain Parley, estimate recovered commission, fill this setup,
-            or reveal either integration asset.
+            Talk normally. Your agent can fill the hotel details, turn your deal policy into
+            rules, set the reservations inbox, and prepare the website handoff.
           </p>
           <div className={styles.promptCard}>
-            “We run a 32-room hotel and pay 18% OTA commission. Prepare the Level 0 file and
-            pilot form, but don&apos;t submit anything.”
+            “We have 32 rooms and pay 18% commission. On quiet nights, offer breakfast before
+            discounting. Send consented enquiries to reservations@ourhotel.com.”
           </div>
           <div className={styles.toolList} aria-live="polite">
             {activity.length === 0 ? (
-              LANDING_TOOL_DEFINITIONS.slice(0, 5).map((tool) => (
+              LANDING_TOOL_DEFINITIONS.slice(0, 7).map((tool) => (
                 <div key={tool.name}><span />{tool.name}</div>
               ))
             ) : (
@@ -542,19 +855,19 @@ export default function HotelOnboarding() {
             )}
           </div>
           <div className={styles.agentBoundary}>
-            <strong>Human checkpoint</strong>
-            <span>No tool publishes code, accepts terms, or enrolls the hotel.</span>
+            <strong>You stay in control</strong>
+            <span>Your agent can prepare the setup, but cannot activate it or share guest details without permission.</span>
           </div>
         </aside>
       </div>
 
       <form className={styles.pilotCard} id="pilot" onSubmit={(event) => void submitPilot(event)}>
         <div>
-          <div className={styles.stepLabel}><span>03</span> Join the pilot</div>
-          <h3>Bring your direct-booking rules. We&apos;ll bring the agent surface.</h3>
+          <div className={styles.stepLabel}><span>05</span> Review once and join the pilot</div>
+          <h3>Happy with the setup? We&apos;ll switch it on with you.</h3>
           <p>
-            Start with one property. We provision the key, map your existing booking engine,
-            and test the live tools with you.
+            Start with one property. We connect your current booking flow, test the rules
+            together, and make sure enquiries reach the right team.
           </p>
         </div>
         <div className={styles.pilotFields}>

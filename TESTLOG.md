@@ -115,3 +115,12 @@
 - Production deployment: GREEN — canonical `https://parleywebmcp.vercel.app` serves the landing page; `/api/v1/health` reports connected Neon and ready inventory, 2026-09-03 05:38 BST.
 - Production WebMCP: GREEN — exactly eight onboarding tools were discovered on `/`; `get_parley_overview` returned the live demo URL, two onboarding paths, and the explicit human-only boundary. Navigating to `/demo` replaced them with exactly the approved eight hotel tools, with no mixed tool surface.
 - Production browser QA: GREEN — zero page errors and zero axe violations. Full-page evidence retained at `dogfood-output/screenshots/landing-production-full.png`.
+
+### Hotelier-language and rule setup follow-up
+
+- Content: GREEN — hero, workflow, setup labels, and website handoff were rewritten in hotel-operating language; natural-language example visibly resolves into six concrete rule cards.
+- WebMCP: GREEN locally — exactly ten landing tools discovered. `configure_negotiation_rules` changed the visible uplift to 7%, quiet-date cap to 10%, perks to breakfast + parking, owner review to six rooms, prepayment threshold to 6%, and voice. `set_guest_enquiry_inbox` filled `reservations@harbour.example` and enabled ask-each-time consent without sending email.
+- Human boundary: GREEN — pilot consent remained unchecked and submission disabled after the agent tool calls. Enquiry copy and tool result both state that no guest details are shared without a clear yes and no message is sent before activation.
+- Persistence: GREEN — migration `0003_lovely_killer_shrike.sql` applied to hosted Neon with a backfill-safe two-step NOT NULL change. The live schema accepted a full rules+inbox pilot request; its exact `qa-rules@parley.invalid` row was immediately removed.
+- Browser: GREEN — desktop visual review is coherent, 390 px viewport has no horizontal overflow, and axe 4.12.1 reports zero violations.
+- Regression: GREEN — typecheck, lint, 31 Vitest tests, three Chromium E2E flows, and the Next.js production build, 2026-09-03 05:56 BST.

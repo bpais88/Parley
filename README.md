@@ -26,7 +26,13 @@ Two shorter prompts:
 
 Every flow also works by clicking the panel with no agent present.
 
-Hotel owners can also open the [Parley homepage](https://parleywebmcp.vercel.app) with their agent. A separate eight-tool onboarding surface explains the product, estimates recoverable commission, fills the shared hotel profile, and reveals a copy-ready Level 0 manifest or install snippet. The agent may prepare the pilot form, but cannot consent, submit enrollment, publish code, or activate a hotel; those remain visible human actions.
+Hotel owners can also open the [Parley homepage](https://parleywebmcp.vercel.app) with their agent. A separate ten-tool onboarding surface explains the product, estimates recoverable commission, fills the shared hotel profile, turns plain-language preferences into visible rule fields, sets a consent-based reservations inbox, and reveals a copy-ready starter file or install snippet. The agent may prepare the pilot form, but cannot consent, submit enrollment, publish code, contact a guest, or activate a hotel; those remain visible human actions.
+
+A hotelier can simply say:
+
+> On quiet dates, offer breakfast and late checkout before lowering the price. Never leave me worse off than an OTA booking. Ask me above eight rooms, require prepayment for the deepest discounts, and send guest enquiries to reservations@ourhotel.com—but ask the guest first.
+
+The shared page turns that into reviewable numeric floors, discount limits, perks, group escalation, prepayment, voice, and an enquiry inbox. Those settings are stored with the human-approved pilot request. Guest messaging is not sent until the property is activated, and the configured contact policy always requires an explicit guest yes.
 
 ## Why WebMCP
 
@@ -90,9 +96,9 @@ Next.js on Vercel keeps the hotel demo, owner UI, API, cron and docs in one reli
 
 ## What is real and what is mocked
 
-Real: deployed WebMCP registration and invocation, shared UI state, deterministic negotiation, hosted Postgres inventory and holds, visitor-bound sessions, offer expiry, confirmation records, economic ledger, owner passcode, redacted activity, cron declarations, and Level 0 discovery.
+Real: deployed WebMCP registration and invocation, shared UI state, deterministic negotiation, hosted Postgres inventory and holds, visitor-bound sessions, offer expiry, confirmation records, economic ledger, owner passcode, redacted activity, cron declarations, Level 0 discovery, and consented storage of pilot rules and inbox preferences.
 
-Demo-only: Casa do Zêzere and its inventory are fictional seeded data; checkout makes no charge; there is one room type and one currency. PMS/channel-manager connectivity, production payments, staff authentication, multi-property support, email fallback, and OTA cancellation are not built. The [integration note](https://parleywebmcp.vercel.app/docs/integration) explains how an existing booking engine remains the payment and inventory authority.
+Demo-only: Casa do Zêzere and its inventory are fictional seeded data; checkout makes no charge; there is one room type and one currency. PMS/channel-manager connectivity, production payments, staff authentication, multi-property support, delivery of guest enquiries to the configured external inbox, email fallback, and OTA cancellation are not built. The [integration note](https://parleywebmcp.vercel.app/docs/integration) explains how an existing booking engine remains the payment and inventory authority.
 
 ## Repository
 
@@ -113,7 +119,7 @@ Database setup requires `DATABASE_URL`, followed by `pnpm db:migrate` and `pnpm 
 | Layer | Evidence |
 |---|---|
 | Engine and schemas | 31 Vitest tests overall; exact worked example, floors, bands, perks, monotonicity, round cap, rebook guards |
-| Tool contract | Eight hotel tools plus eight landing-page onboarding tools; unique names, strict schemas, annotations, description quality, forbidden-action checks |
+| Tool contract | Eight hotel tools plus ten landing-page onboarding tools; unique names, strict schemas, annotations, description quality, forbidden-action checks |
 | Browser E2E | Agent-shim sequence, clicks-only checkout, owner +€74.10 ledger assertion |
 | Hosted integration | Real availability → hold → offer → counter → token → confirm → booking → owner ledger against Neon |
 | WebMCP runtime | Deployed page tools discovered and directly invoked in the in-app browser; final Sol/Terra prompt screenshots remain in `TESTLOG.md` until observed |

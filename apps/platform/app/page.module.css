@@ -147,6 +147,36 @@
 .inputSuffix { position: relative; display: block; }
 .inputSuffix input { width: 100%; padding-right: 34px; }
 .inputSuffix > span { position: absolute; top: 15px; right: 14px; color: var(--muted); }
+.briefCard { margin-bottom: 18px; padding: 18px; border: 1px solid #dce1d8; border-radius: 14px; background: #f5f6ef; }
+.briefCard > label { display: block; margin-bottom: 9px; color: #405950; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+.briefCard textarea { width: 100%; resize: vertical; border: 1px solid #cfd6cb; border-radius: 10px; padding: 13px; color: var(--ink); background: white; font: 15px/1.5 Georgia, serif; }
+.briefCard textarea:focus { outline: 3px solid rgba(217,245,119,.65); border-color: var(--green); }
+.briefCard > div { display: flex; justify-content: space-between; gap: 16px; align-items: center; margin-top: 10px; color: var(--muted); font-size: 11px; }
+.briefCard button { flex: 0 0 auto; border: 0; color: var(--green); background: transparent; font: 800 11px Arial, sans-serif; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.ruleResults { margin-bottom: 34px; overflow: hidden; border: 1px solid #dce1d8; border-radius: 16px; }
+.resultHeader { display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 16px 18px; background: #eef2e9; }
+.resultHeader > div { display: grid; gap: 3px; }
+.resultHeader strong { font: 600 18px Georgia, serif; }
+.resultHeader span { color: var(--muted); font-size: 10px; }
+.readyPill { flex: 0 0 auto; padding: 6px 9px; border-radius: 999px; color: var(--green)!important; background: var(--lime); font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+.ruleGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ruleGrid > label { min-height: 108px; display: flex; flex-direction: column; justify-content: space-between; gap: 7px; padding: 16px 18px; border-top: 1px solid #e1e4dc; color: #29493f; font-size: 12px; font-weight: 800; }
+.ruleGrid > label:nth-child(odd) { border-right: 1px solid #e1e4dc; }
+.ruleGrid > label > span:not(.ruleValue) { color: var(--muted); font-size: 11px; font-weight: 500; text-transform: capitalize; }
+.ruleGrid > label > strong { font-size: 11px; }
+.ruleValue { display: flex; align-items: baseline; gap: 5px; font: 600 19px Georgia, serif; }
+.ruleValue input { width: 58px; border: 0; border-bottom: 1px solid #aebbb5; padding: 2px; color: var(--green); background: transparent; font: inherit; }
+.voiceInput { width: 100%; border: 0; border-bottom: 1px solid #aebbb5; padding: 4px 0; color: var(--green); background: transparent; font: 600 13px Georgia, serif; }
+.ruleValue input:focus, .voiceInput:focus { outline: 2px solid var(--lime); outline-offset: 2px; }
+.ruleSummary { margin: 0; padding: 13px 18px; border-top: 1px solid #e1e4dc; color: #52675f; background: #fafbf7; font-size: 11px; line-height: 1.5; }
+.inboxCard { display: grid; grid-template-columns: auto 1fr; gap: 15px; margin-bottom: 34px; padding: 18px; border: 1px solid #cfe0d8; border-radius: 15px; background: #edf6f1; }
+.inboxIcon { display: grid; width: 38px; height: 38px; place-items: center; border-radius: 50%; color: var(--lime); background: var(--green); font: 700 17px Georgia, serif; }
+.inboxFields { display: grid; gap: 10px; }
+.inboxFields > label:first-child { display: grid; gap: 7px; color: #405950; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+.inboxFields input[type="email"] { height: 43px; border: 1px solid #cbd9d2; border-radius: 9px; padding: 0 12px; color: var(--ink); background: white; font: 500 14px Arial, sans-serif; }
+.inboxToggle { display: flex; gap: 8px; align-items: center; color: #244d40; font-size: 12px; font-weight: 800; }
+.inboxToggle input { width: 16px; height: 16px; accent-color: var(--green); }
+.inboxFields p { margin: 0; color: #506b62; font-size: 11px; line-height: 1.5; }
 .previewTabs { display: flex; gap: 5px; width: fit-content; padding: 4px; border-radius: 10px; background: #e9ece4; }
 .previewTabs button { padding: 8px 11px; border: 0; border-radius: 7px; color: #4e625b; background: transparent; font: 700 11px Arial, sans-serif; cursor: pointer; }
 .previewTabs button[aria-pressed="true"] { color: var(--ink); background: white; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
@@ -211,6 +241,10 @@
   .proofStrip { grid-template-columns: 1fr; }
   .proofStrip div { padding: 18px 0; border-right: 0; }
   .steps, .formGrid { grid-template-columns: 1fr; }
+  .ruleGrid { grid-template-columns: 1fr; }
+  .ruleGrid > label:nth-child(odd) { border-right: 0; }
+  .briefCard > div { align-items: start; flex-direction: column; }
+  .inboxCard { grid-template-columns: 1fr; }
   .how, .openWeb { padding-block: 82px; }
   .studio { width: 100%; border-radius: 0; padding: 55px 18px; }
   .builderCard, .agentCard, .pilotCard { padding: 22px; }

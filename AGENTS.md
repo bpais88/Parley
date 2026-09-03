@@ -20,7 +20,7 @@ Read `PRD.md` before the first change. This file governs every task.
 
 ## Product boundaries
 
-1. The approved tool set contains eight tools: `get_stay_context`, `set_dates`, `search_availability`, `hold_rooms`, `request_offer`, `counter_offer`, `get_offer_status`, and `get_booking`.
+1. The approved hotel booking surface contains eight tools: `get_stay_context`, `set_dates`, `search_availability`, `hold_rooms`, `request_offer`, `counter_offer`, `get_offer_status`, and `get_booking`. The separate Parley landing page has ten hotel-onboarding tools recorded in `DECISIONS.md`; those tools never book, activate, publish, contact a guest, or submit enrollment.
 2. Accept, pay, cancel, and card-entry actions are never tools. The demo checkout is a visible UI action and never sends or stores card data.
 3. Describe the hotel side as a deterministic policy engine, not a second autonomous agent.
 4. The primary demo is the five-room offsite. Rebook-direct is added only after the primary flow is green.
@@ -44,4 +44,3 @@ Read `PRD.md` before the first change. This file governs every task.
 - Never mark an unobserved manual gate green.
 - After an implementation milestone, run typecheck, lint, and relevant tests; update `TESTLOG.md` and `DECISIONS.md`; commit conventionally.
 - Preserve submission time for a public repository, detected MIT license, live URL, public YouTube video under three minutes with audio, English description, and Devpost submission.
-

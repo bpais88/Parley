@@ -93,3 +93,11 @@ The participant's canonical Vercel project is `parleywebmcp`. Its Root Directory
 - Level 0 JSON is immediately copyable and vendor-neutral. The script snippet truthfully retains `YOUR_PROPERTY_KEY` until a pilot hotel is provisioned; it does not imply that pasting an unissued key activates service.
 - Cross-route links from the WebMCP landing surface use full document navigation. This prevents a Next.js client transition from mixing the landing tool set with the hotel demo's static tool set when `unregisterTool` is unavailable.
 - Pilot requests are stored in an additive `pilot_signups` table with normalized websites, lower-cased emails, a five-per-minute visitor limit, and an email+website uniqueness constraint. A verified QA row was removed immediately after the endpoint test.
+
+## 2026-09-03 — Hotelier-language rules and consented enquiry setup
+
+- Reframed the landing page around hotel outcomes and familiar language: quiet dates, perks, group approval, prepayment, reservations inboxes, and protected earnings. WebMCP and JSON remain available as secondary proof for agents and website partners rather than leading the hotelier experience.
+- Added `configure_negotiation_rules` and `set_guest_enquiry_inbox` to the landing-only tool set, bringing it to ten tools. A hotelier describes policy conversationally; the browser agent maps it to strict, visible, editable rule fields. No LLM or nondeterministic parsing was added to the negotiation engine.
+- The enquiry setup supports either `do_not_collect` or `ask_each_time`. Enabling an inbox requires a valid email and permanently fixes the onboarding promise to asking the guest before sharing contact details; the tool itself never contacts anyone or sends email.
+- Negotiation rules and contact settings are saved with the human-approved pilot signup and updated on a repeat signup for the same email+website. External delivery to that inbox begins only after property activation and remains explicitly listed as not built in the hackathon demo.
+- The natural-language textarea is a shared conversation aid, not a hidden parser. In the ChatGPT browser, the agent calls the strict rule tool; without an agent, the example and resulting fields remain directly editable by the hotelier.
